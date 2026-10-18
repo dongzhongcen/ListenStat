@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ListenStat</string>
+    <string name="open_permission">打开通知使用权设置</string>
+    <string name="enable_listenstat">请开启 ListenStat 的通知使用权，才能统计控制中心正在播放的内容。</string>
+    <string name="permission_on">通知使用权：已开启（仅本地统计，不上传）</string>
+    <string name="permission_off">通知使用权：未开启 — 无法读取媒体会话</string>
+    <string name="refresh">刷新统计</string>
+    <string name="total_fmt">合计时长：%1$s</string>
+    <string name="section_apps">按应用 Top 20</string>
+    <string name="section_titles">按内容标题 Top 20</string>
+    <string name="empty">（暂无数据，先放一段有声书/音乐再回来刷新）</string>
+</resources>
