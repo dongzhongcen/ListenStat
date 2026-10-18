@@ -1,4 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ListenStat" parent="Theme.Material3.DayNight.NoActionBar" />
+    <style name="Theme.ListenStat" parent="Theme.Material3.DayNight.NoActionBar">
+        <item name="colorPrimary">@color/ls_primary</item>
+        <item name="colorOnPrimary">@color/ls_on_primary</item>
+        <item name="colorPrimaryContainer">@color/ls_primary_container</item>
+        <item name="colorOnPrimaryContainer">@color/ls_on_primary_container</item>
+        <item name="colorSecondary">@color/ls_secondary</item>
+        <item name="colorOnSecondary">@color/ls_on_secondary</item>
+        <item name="colorSecondaryContainer">@color/ls_secondary_container</item>
+        <item name="colorOnSecondaryContainer">@color/ls_on_secondary_container</item>
+        <item name="colorTertiary">@color/ls_tertiary</item>
+        <item name="colorTertiaryContainer">@color/ls_tertiary_container</item>
+        <item name="android:colorBackground">@color/ls_background</item>
+        <item name="colorOnBackground">@color/ls_on_background</item>
+        <item name="colorSurface">@color/ls_surface</item>
+        <item name="colorOnSurface">@color/ls_on_surface</item>
+        <item name="colorSurfaceVariant">@color/ls_surface_variant</item>
+        <item name="colorOnSurfaceVariant">@color/ls_on_surface_variant</item>
+        <item name="colorSurfaceContainerLow">@color/ls_surface_container_low</item>
+        <item name="colorSurfaceContainer">@color/ls_surface_container</item>
+        <item name="colorSurfaceContainerHigh">@color/ls_surface_container_high</item>
+        <item name="colorOutline">@color/ls_outline</item>
+        <item name="colorOutlineVariant">@color/ls_outline_variant</item>
+        <item name="android:statusBarColor">@android:color/transparent</item>
+        <item name="android:navigationBarColor">@android:color/transparent</item>
+    </style>
+
+    <style name="LS.Card" parent="Widget.Material3.CardView.Filled">
+        <item name="cardCornerRadius">24dp</item>
+        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
+        <item name="cardElevation">0dp</item>
+    </style>
+
+    <style name="LS.SectionTitle" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
+        <item name="android:textColor">?attr/colorOnSurface</item>
+    </style>
 </resources>

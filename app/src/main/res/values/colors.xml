@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Calm teal/blue fallback palette (used when dynamic color is unavailable, < Android 12). -->
+<resources>
+    <color name="ls_primary">#2B6A73</color>
+    <color name="ls_on_primary">#FFFFFF</color>
+    <color name="ls_primary_container">#C9ECF0</color>
+    <color name="ls_on_primary_container">#002024</color>
+    <color name="ls_secondary">#4A6267</color>
+    <color name="ls_on_secondary">#FFFFFF</color>
+    <color name="ls_secondary_container">#CDE7EC</color>
+    <color name="ls_on_secondary_container">#051F23</color>
+    <color name="ls_tertiary">#4D5F7C</color>
+    <color name="ls_tertiary_container">#D5E3FF</color>
+    <color name="ls_background">#F5FAFB</color>
+    <color name="ls_on_background">#171D1E</color>
+    <color name="ls_surface">#F5FAFB</color>
+    <color name="ls_on_surface">#171D1E</color>
+    <color name="ls_surface_variant">#DBE4E6</color>
+    <color name="ls_on_surface_variant">#3F484A</color>
+    <color name="ls_surface_container_low">#EFF5F6</color>
+    <color name="ls_surface_container">#E9EFF0</color>
+    <color name="ls_surface_container_high">#E3E9EA</color>
+    <color name="ls_outline">#6F797A</color>
+    <color name="ls_outline_variant">#BFC8CA</color>
+</resources>

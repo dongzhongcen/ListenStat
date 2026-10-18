@@ -4,16 +4,25 @@ import androidx.room.Dao
 import androidx.room.Insert
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 data class NamedDuration(
     val name: String,
     val totalMs: Long
 )
 
+data class TimeSpan(
+    val startedAtMs: Long,
+    val endedAtMs: Long
+)
+
 @Dao
 interface PlayDao {
     @Insert
     suspend fun insert(session: PlaySession): Long
+
+    @Insert
+    suspend fun insertAll(sessions: List<PlaySession>)
 
     @Update
     suspend fun update(session: PlaySession)
@@ -53,4 +62,37 @@ interface PlayDao {
         """
     )
     suspend fun totalMs(prefix: String): Long?
+
+    /** Observed by the UI; emits again only when rows are written (no polling). */
+    @Query(
+        """
+        SELECT SUM(durationMs) FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%'
+        """
+    )
+    fun totalMsFlow(prefix: String): Flow<Long?>
+
+    /** Raw spans of one day, bucketed by hour in Kotlin for the day chart. */
+    @Query("SELECT startedAtMs, endedAtMs FROM play_sessions WHERE dayKey = :day")
+    suspend fun spansForDay(day: String): List<TimeSpan>
+
+    @Query(
+        """
+        SELECT dayKey AS name, SUM(durationMs) AS totalMs
+        FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%'
+        GROUP BY dayKey
+        """
+    )
+    suspend fun totalsByDay(prefix: String): List<NamedDuration>
+
+    @Query(
+        """
+        SELECT substr(dayKey, 1, 7) AS name, SUM(durationMs) AS totalMs
+        FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%'
+        GROUP BY substr(dayKey, 1, 7)
+        """
+    )
+    suspend fun totalsByMonth(prefix: String): List<NamedDuration>
 }
