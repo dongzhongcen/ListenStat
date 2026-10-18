@@ -4,7 +4,11 @@
 /.idea/
 .DS_Store
 /build/
-/app/build/
+*/build/
 /captures/
+.externalNativeBuild/
+.cxx/
 *.apk
 *.aab
+*.ap_
+*.dex

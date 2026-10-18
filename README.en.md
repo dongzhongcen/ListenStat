@@ -2,36 +2,37 @@
 
 # ListenStat
 
-**Local Android listening-time tracker**
+**Local listening / media play-time stats for Android**
 
-*Day / month / year · app & title Top 20 · data stays on device*
+*By day · month · year · per app · title Top 20 · data stays on device*
 
-[简体中文](README.md) | **English**
+[简体中文](README.md)
 
-[![License](https://img.shields.io/badge/license-MIT-blue)](LICENSE)
-[![Platform](https://img.shields.io/badge/platform-Android%208.0%2B-green)](https://github.com/dongzhongcen/ListenStat)
+[![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
+[![Platform](https://img.shields.io/badge/platform-Android-green.svg)](#)
 
 </div>
 
 ## Overview
 
-ListenStat reads the system media sessions used by the control-center / media notification player and accumulates play time **on device only**:
+ListenStat is an **Android** local tracker. It reads the system “now playing” media session, accumulates play time per app and title, summarizes by day / month / year, and shows Top 10–20 titles.
 
-- Ranges: today / this month / this year
-- Top 20 by app
-- Top 20 by content title (depends on what the player puts in `MediaMetadata`)
+- **Local-first**: stats stay on device; nothing is uploaded by default
+- **Permissions**: notification / media-session access is required to read the control-center player
+- **Privacy**: only package name, media title, duration, and timestamps—no passwords or contacts
 
-**Privacy: local Room database only — no upload, no account, no analytics SDK.**
+## v1 scope
 
-Requires **Notification Listener** access. Uninstalling the app removes the data.
+| Feature | Description |
+|---------|-------------|
+| Auto logging | Background listen for playing app + title |
+| Time buckets | Day / month / year |
+| Rankings | Per app and per title Top 20 |
+| Storage | On-device DB / files |
 
-## Build
+## Status
 
-Open in Android Studio (Android 8.0+), or:
-
-```bash
-./gradlew :app:assembleDebug
-```
+Public repository ready; app implementation in progress.
 
 ## License
 
