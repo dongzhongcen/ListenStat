@@ -6,7 +6,13 @@ import androidx.room.PrimaryKey
 
 @Entity(
     tableName = "play_sessions",
-    indices = [Index("packageName"), Index("title"), Index("dayKey")]
+    indices = [
+        Index("packageName"),
+        Index("title"),
+        Index("dayKey"),
+        // v2: speeds up backup-import de-duplication (startedAtMs + packageName + title)
+        Index("startedAtMs", "packageName", "title")
+    ]
 )
 data class PlaySession(
     @PrimaryKey(autoGenerate = true) val id: Long = 0,
