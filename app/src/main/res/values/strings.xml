@@ -1,27 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ListenStat</string>
-    <string name="header_title">听时</string>
-    <string name="header_subtitle">本地统计 · 不上传 · 后台省电</string>
+    <string name="home_title">我的\n收听</string>
+    <string name="achievements_title">我的\n成就</string>
+    <string name="settings_title">设置</string>
+    <string name="greeting_morning">早上好</string>
+    <string name="greeting_noon">中午好</string>
+    <string name="greeting_afternoon">下午好</string>
+    <string name="greeting_evening">晚上好</string>
+    <string name="greeting_night">夜深了</string>
+    <string name="nav_stats">统计</string>
+    <string name="nav_achievements">成就</string>
+    <string name="nav_settings">设置</string>
+    <string name="menu">菜单</string>
+
     <string name="open_permission">去开启通知使用权</string>
     <string name="enable_listenstat">请开启 ListenStat 的通知使用权，才能统计控制中心正在播放的内容。</string>
     <string name="permission_title">还差一步</string>
     <string name="permission_body">ListenStat 需要「通知使用权」来读取系统正在播放的媒体会话。数据只保存在本机，不上传。</string>
+
     <string name="range_day">日</string>
     <string name="range_month">月</string>
     <string name="range_year">年</string>
-    <string name="total_label_day">今天共听</string>
-    <string name="total_label_month">本月共听</string>
-    <string name="total_label_year">今年共听</string>
+    <string name="prev_period">上一个</string>
+    <string name="next_period">下一个</string>
+    <string name="pick_period">选择日期</string>
+    <string name="today">今天</string>
+    <string name="yesterday">昨天</string>
+    <string name="total_label_today">今天共听</string>
+    <string name="total_label_this_month">本月共听</string>
+    <string name="total_label_this_year">今年共听</string>
+    <string name="total_label_fmt">%1$s共听</string>
+    <string name="unit_hours">小时</string>
+    <string name="unit_minutes">分钟</string>
+    <string name="unit_apps">个应用</string>
+    <string name="unit_titles">个标题</string>
     <string name="section_apps">按应用 Top 20</string>
     <string name="section_titles">按内容标题 Top 20</string>
+    <string name="hand_top">top 20</string>
+    <string name="empty_hand">shh… nothing yet</string>
     <string name="empty_title">这里还很安静</string>
     <string name="empty_body">先放一段有声书或音乐，回来就能看到统计。</string>
-    <string name="now_listening">正在听 / Now listening</string>
+
+    <string name="now_listening">正在听</string>
     <string name="live_idle">当前未在播放</string>
     <string name="live_idle_hint">今日累计</string>
     <string name="live_unknown_title">(未知标题)</string>
     <string name="live_more_fmt">%1$s 等 %2$d 个</string>
     <string name="live_elapsed_label">本段</string>
-    <string name="live_today_fmt">今日累计 %1$s</string>
+    <string name="pill_today_fmt">今日 %1$s</string>
+    <string name="pill_sessions_fmt">%1$d 段</string>
+    <string name="go_today">查看今天</string>
+
+    <string name="ach_unlocked">已解锁</string>
+    <string name="ach_total">全部</string>
+    <string name="ach_hand">keep listening ♪</string>
+    <string name="ach_progress_fmt">%1$d / %2$d</string>
+    <string name="ach_snack_one">解锁成就：%1$s</string>
+    <string name="ach_snack_many">解锁 %1$d 个成就：%2$s</string>
+    <string name="ach_view">查看</string>
+
+    <string name="wallpaper_title">壁纸背景</string>
+    <string name="wallpaper_body">从相册选一张图作为背景（系统照片选择器，无需存储权限）。图片复制到应用私有目录，不会上传。</string>
+    <string name="wallpaper_pick">选择图片</string>
+    <string name="wallpaper_remove">移除</string>
+    <string name="wallpaper_blur">模糊</string>
+    <string name="wallpaper_dim">柔化遮罩</string>
+    <string name="wallpaper_set">壁纸已设置</string>
+    <string name="wallpaper_removed">已移除壁纸</string>
+    <string name="wallpaper_failed">无法读取这张图片</string>
+
+    <string name="update_title">检查更新</string>
+    <string name="update_body">只访问 GitHub Releases 获取最新版本号，不上传任何数据。</string>
+    <string name="update_auto">打开应用时自动检查（每天最多一次）</string>
+    <string name="update_check_now">检查更新</string>
+    <string name="update_checking">正在检查…</string>
+    <string name="update_latest_fmt">已是最新版本（%1$s）</string>
+    <string name="update_no_release">暂无正式发布版本</string>
+    <string name="update_failed_fmt">检查失败：%1$s</string>
+    <string name="update_last_fmt">上次检查：%1$s</string>
+    <string name="update_never">尚未检查</string>
+    <string name="update_found_fmt">发现新版本 %1$s</string>
+    <string name="update_current_fmt">当前 %1$s</string>
+    <string name="update_no_notes">（无更新说明）</string>
+    <string name="update_later">稍后</string>
+    <string name="update_page">发布页</string>
+    <string name="update_apk">下载 APK</string>
+    <string name="update_hand">new!</string>
+
+    <string name="backup_title">备份与恢复</string>
+    <string name="backup_body">把所有收听记录、成就和设置导出为一个 JSON 文件，保存位置由你在系统文件选择器中决定；导入时自动合并，不会产生重复记录。</string>
+    <string name="backup_open">备份 / 恢复</string>
+    <string name="backup_export">导出</string>
+    <string name="backup_import">导入</string>
+    <string name="backup_exported_fmt">已导出 %1$d 条记录、%2$d 个成就</string>
+    <string name="backup_imported_fmt">已导入 %1$d 条新记录（跳过重复 %2$d 条）</string>
+    <string name="backup_failed_fmt">操作失败：%1$s</string>
+    <string name="backup_working">处理中…</string>
+
+    <string name="access_title">通知使用权</string>
+    <string name="access_on">已开启，正在本地统计</string>
+    <string name="access_off">未开启，无法统计</string>
+    <string name="access_open">打开设置</string>
+
+    <string name="about_title">关于</string>
+    <string name="about_version_fmt">ListenStat 听时 · 版本 %1$s</string>
+    <string name="about_body">本地统计 · 不上传 · 后台省电。联网仅用于检查 GitHub 上的新版本。</string>
+    <string name="about_github">GitHub</string>
+    <string name="about_licenses">字体许可</string>
+    <string name="close">关闭</string>
+    <string name="cancel">取消</string>
+    <string name="this_month">本月</string>
+    <string name="this_year">今年</string>
+    <string name="pick_month">选择月份</string>
+    <string name="pick_year">选择年份</string>
 </resources>

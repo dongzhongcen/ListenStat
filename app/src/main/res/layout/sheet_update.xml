@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:orientation="vertical"
+    android:paddingHorizontal="22dp"
+    android:paddingTop="12dp"
+    android:paddingBottom="24dp">
+
+    <View
+        android:layout_width="36dp"
+        android:layout_height="4dp"
+        android:layout_gravity="center_horizontal"
+        android:alpha="0.35"
+        android:background="@drawable/bg_handle" />
+
+    <TextView
+        style="@style/LS.Hand"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:rotation="-4"
+        android:text="@string/update_hand"
+        android:textSize="22sp" />
+
+    <TextView
+        android:id="@+id/txtTitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
+        android:textColor="@color/ls_ink"
+        android:textSize="26sp" />
+
+    <TextView
+        android:id="@+id/txtSubtitle"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:textAppearance="?attr/textAppearanceBodyMedium"
+        android:textColor="@color/ls_ink" />
+
+    <androidx.core.widget.NestedScrollView
+        android:id="@+id/notesScroll"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="14dp"
+        android:background="@drawable/bg_card_white">
+
+        <TextView
+            android:id="@+id/txtNotes"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:lineSpacingMultiplier="1.2"
+            android:padding="18dp"
+            android:textAppearance="?attr/textAppearanceBodyMedium"
+            android:textColor="@color/ls_ink"
+            android:textIsSelectable="true" />
+    </androidx.core.widget.NestedScrollView>
+
+    <!-- Black pill toolbar -->
+    <LinearLayout
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="18dp"
+        android:background="@drawable/bg_pill_ink"
+        android:gravity="center_vertical"
+        android:orientation="horizontal"
+        android:padding="6dp">
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnLater"
+            style="@style/LS.Button.OnInk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/update_later" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnPage"
+            style="@style/LS.Button.WhiteOnInk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="4dp"
+            android:text="@string/update_page" />
+
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/btnApk"
+            style="@style/LS.Button.WhiteOnInk"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="6dp"
+            android:backgroundTint="@color/ls_pink"
+            android:text="@string/update_apk" />
+    </LinearLayout>
+</LinearLayout>

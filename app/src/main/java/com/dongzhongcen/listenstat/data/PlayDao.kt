@@ -11,6 +11,24 @@ data class NamedDuration(
     val totalMs: Long
 )
 
+data class SessionKey(
+    val startedAtMs: Long,
+    val packageName: String,
+    val title: String
+)
+
+/** Per-day aggregate used by achievements. firstStartMs ignores segments shorter than 1 min. */
+data class DayAggregate(
+    val dayKey: String,
+    val totalMs: Long,
+    val firstStartMs: Long?
+)
+
+data class TitleFirstDay(
+    val title: String,
+    val firstDay: String
+)
+
 data class TimeSpan(
     val startedAtMs: Long,
     val endedAtMs: Long
@@ -95,4 +113,45 @@ interface PlayDao {
         """
     )
     suspend fun totalsByMonth(prefix: String): List<NamedDuration>
+
+    @Query("SELECT COUNT(DISTINCT packageName) FROM play_sessions WHERE dayKey LIKE :prefix || '%'")
+    suspend fun countApps(prefix: String): Int
+
+    @Query("SELECT COUNT(DISTINCT title) FROM play_sessions WHERE title != '' AND dayKey LIKE :prefix || '%'")
+    suspend fun countTitles(prefix: String): Int
+
+    @Query("SELECT COUNT(*) FROM play_sessions WHERE dayKey LIKE :prefix || '%'")
+    suspend fun countSessions(prefix: String): Int
+
+    @Query("SELECT MIN(dayKey) FROM play_sessions")
+    suspend fun firstDayKey(): String?
+
+    // ---- achievements ----
+
+    @Query(
+        """
+        SELECT dayKey, SUM(durationMs) AS totalMs,
+               MIN(CASE WHEN durationMs >= 60000 THEN startedAtMs END) AS firstStartMs
+        FROM play_sessions
+        GROUP BY dayKey
+        ORDER BY dayKey
+        """
+    )
+    suspend fun dayAggregates(): List<DayAggregate>
+
+    @Query(
+        """
+        SELECT title, MIN(dayKey) AS firstDay FROM play_sessions
+        WHERE title != '' GROUP BY title ORDER BY firstDay
+        """
+    )
+    suspend fun titleFirstDays(): List<TitleFirstDay>
+
+    // ---- backup ----
+
+    @Query("SELECT * FROM play_sessions WHERE id > :afterId ORDER BY id LIMIT :limit")
+    suspend fun page(afterId: Long, limit: Int): List<PlaySession>
+
+    @Query("SELECT startedAtMs, packageName, title FROM play_sessions")
+    suspend fun allKeys(): List<SessionKey>
 }

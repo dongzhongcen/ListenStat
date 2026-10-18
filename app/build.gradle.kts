@@ -4,6 +4,18 @@ plugins {
     id("com.google.devtools.ksp")
 }
 
+/**
+ * Release signing: path + passwords come from ~/.gradle/gradle.properties or environment
+ * variables — never from this repository.
+ *   LISTENSTAT_KEYSTORE, LISTENSTAT_KEYSTORE_PASSWORD, LISTENSTAT_KEY_ALIAS, LISTENSTAT_KEY_PASSWORD
+ * If absent, release builds fall back to the local debug key (with a warning); such an APK
+ * will NOT upgrade an installation signed with the project key.
+ */
+fun signingValue(name: String): String? =
+    (findProperty(name) as String?)?.takeIf { it.isNotBlank() } ?: System.getenv(name)?.takeIf { it.isNotBlank() }
+
+val releaseKeystore: File? = signingValue("LISTENSTAT_KEYSTORE")?.let { file(it) }?.takeIf { it.isFile }
+
 android {
     namespace = "com.dongzhongcen.listenstat"
     compileSdk = 34
@@ -12,17 +24,35 @@ android {
         applicationId = "com.dongzhongcen.listenstat"
         minSdk = 26
         targetSdk = 34
-        versionCode = 2
-        versionName = "0.1.1"
+        versionCode = 3
+        versionName = "0.2.0"
+    }
+
+    signingConfigs {
+        if (releaseKeystore != null) {
+            create("release") {
+                storeFile = releaseKeystore
+                storePassword = signingValue("LISTENSTAT_KEYSTORE_PASSWORD")
+                keyAlias = signingValue("LISTENSTAT_KEY_ALIAS")
+                keyPassword = signingValue("LISTENSTAT_KEY_PASSWORD")
+            }
+        }
     }
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true
+            isShrinkResources = true
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
             )
+            signingConfig = if (releaseKeystore != null) {
+                signingConfigs.getByName("release")
+            } else {
+                logger.warn("ListenStat: LISTENSTAT_KEYSTORE not set — release is signed with the debug key.")
+                signingConfigs.getByName("debug")
+            }
         }
     }
     compileOptions {
@@ -30,12 +60,21 @@ android {
         targetCompatibility = JavaVersion.VERSION_17
     }
     kotlinOptions { jvmTarget = "17" }
-    buildFeatures { viewBinding = true }
+    buildFeatures {
+        viewBinding = true
+        buildConfig = true
+    }
+    testOptions { unitTests.isReturnDefaultValues = true }
+}
+
+ksp {
+    arg("room.schemaLocation", "$projectDir/schemas")
 }
 
 dependencies {
     implementation("androidx.core:core-ktx:1.13.1")
     implementation("androidx.appcompat:appcompat:1.7.0")
+    implementation("androidx.activity:activity-ktx:1.9.1")
     implementation("com.google.android.material:material:1.12.0")
     implementation("androidx.constraintlayout:constraintlayout:2.1.4")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.4")
@@ -44,4 +83,8 @@ dependencies {
     implementation("androidx.room:room-ktx:2.6.1")
     ksp("androidx.room:room-compiler:2.6.1")
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-android:1.8.1")
+
+    testImplementation("junit:junit:4.13.2")
+    testImplementation("org.json:json:20240303")
+    testImplementation("org.xerial:sqlite-jdbc:3.46.1.0")
 }

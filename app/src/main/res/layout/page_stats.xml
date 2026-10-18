@@ -1,0 +1,504 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="110dp">
+
+        <!-- Greeting row -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageView
+                android:layout_width="36dp"
+                android:layout_height="36dp"
+                android:background="@drawable/bg_circle_mint"
+                android:importantForAccessibility="no"
+                android:padding="8dp"
+                android:src="@drawable/ic_headphones"
+                app:tint="@color/ls_ink" />
+
+            <TextView
+                android:id="@+id/txtGreeting"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_marginStart="10dp"
+                android:layout_weight="1"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/ls_ink" />
+
+            <ImageButton
+                android:id="@+id/btnMenu"
+                style="@style/LS.CircleButton"
+                android:contentDescription="@string/menu"
+                android:src="@drawable/ic_menu" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/LS.BigTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp"
+            android:text="@string/home_title" />
+
+        <!-- Notification access not granted -->
+        <LinearLayout
+            android:id="@+id/cardPermission"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:background="@drawable/bg_card_pink"
+            android:orientation="vertical"
+            android:padding="22dp"
+            android:tag="glass"
+            android:visibility="gone">
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/permission_title"
+                android:textAppearance="?attr/textAppearanceTitleLarge"
+                android:textColor="@color/ls_ink" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="6dp"
+                android:text="@string/permission_body"
+                android:textColor="@color/ls_ink" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnPermission"
+                style="@style/LS.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/open_permission" />
+        </LinearLayout>
+
+        <!-- Range chips -->
+        <HorizontalScrollView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="20dp"
+            android:clipToPadding="false"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/chipDay"
+                    style="@style/LS.Chip"
+                    android:text="@string/range_day" />
+
+                <TextView
+                    android:id="@+id/chipMonth"
+                    style="@style/LS.Chip"
+                    android:text="@string/range_month" />
+
+                <TextView
+                    android:id="@+id/chipYear"
+                    style="@style/LS.Chip"
+                    android:text="@string/range_year" />
+            </LinearLayout>
+        </HorizontalScrollView>
+
+        <!-- Hero: now listening / today -->
+        <FrameLayout
+            android:id="@+id/hero"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="18dp">
+
+            <com.dongzhongcen.listenstat.ui.NotchedCardView
+                android:id="@+id/heroBg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical"
+                android:paddingHorizontal="22dp"
+                android:paddingTop="20dp"
+                android:paddingBottom="22dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/now_listening"
+                        android:textAppearance="?attr/textAppearanceLabelLarge"
+                        android:textColor="@color/ls_ink" />
+
+                    <ImageView
+                        android:layout_width="40dp"
+                        android:layout_height="40dp"
+                        android:background="@drawable/bg_circle_ink"
+                        android:importantForAccessibility="no"
+                        android:padding="10dp"
+                        android:src="@drawable/ic_headphones"
+                        app:tint="@color/ls_white" />
+                </LinearLayout>
+
+                <FrameLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="140dp">
+
+                    <View
+                        android:id="@+id/breath"
+                        android:layout_width="132dp"
+                        android:layout_height="132dp"
+                        android:layout_gravity="center"
+                        android:alpha="0"
+                        android:background="@drawable/breath_circle"
+                        android:importantForAccessibility="no" />
+
+                    <LinearLayout
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_gravity="center"
+                        android:gravity="center_horizontal"
+                        android:orientation="vertical">
+
+                        <TextView
+                            android:id="@+id/txtLiveCaption"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/live_elapsed_label"
+                            android:textAppearance="?attr/textAppearanceLabelMedium"
+                            android:textColor="@color/ls_muted" />
+
+                        <TextView
+                            android:id="@+id/txtLiveTimer"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/poppins_regular"
+                            android:fontFeatureSettings="tnum"
+                            android:includeFontPadding="false"
+                            android:text="0:00:00"
+                            android:textColor="@color/ls_ink"
+                            android:textSize="46sp" />
+                    </LinearLayout>
+                </FrameLayout>
+
+                <TextView
+                    android:id="@+id/txtLiveTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="64dp"
+                    android:ellipsize="end"
+                    android:maxLines="2"
+                    android:textAppearance="?attr/textAppearanceTitleLarge"
+                    android:textColor="@color/ls_ink" />
+
+                <TextView
+                    android:id="@+id/txtLiveApp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginEnd="64dp"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/ls_ink" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="14dp"
+                    android:layout_marginEnd="76dp"
+                    android:orientation="horizontal">
+
+                    <TextView
+                        android:id="@+id/pillToday"
+                        style="@style/LS.SmallPill"
+                        android:tag="pill" />
+
+                    <TextView
+                        android:id="@+id/pillSessions"
+                        style="@style/LS.SmallPill"
+                        android:layout_marginStart="6dp"
+                        android:tag="pill" />
+                </LinearLayout>
+            </LinearLayout>
+
+            <ImageButton
+                android:id="@+id/btnHeroGo"
+                android:layout_width="62dp"
+                android:layout_height="62dp"
+                android:layout_gravity="bottom|end"
+                android:layout_margin="4dp"
+                android:background="@drawable/bg_circle_pink"
+                android:contentDescription="@string/go_today"
+                android:padding="18dp"
+                android:scaleType="fitCenter"
+                android:src="@drawable/ic_arrow_up_right"
+                app:tint="@color/ls_ink" />
+        </FrameLayout>
+
+        <!-- Period navigator -->
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <ImageButton
+                android:id="@+id/btnPrev"
+                style="@style/LS.CircleButton"
+                android:contentDescription="@string/prev_period"
+                android:src="@drawable/ic_chevron_left" />
+
+            <TextView
+                android:id="@+id/txtPeriod"
+                android:layout_width="0dp"
+                android:layout_height="44dp"
+                android:layout_marginHorizontal="8dp"
+                android:layout_weight="1"
+                android:background="@drawable/bg_pill_white"
+                android:contentDescription="@string/pick_period"
+                android:drawablePadding="8dp"
+                android:ellipsize="end"
+                android:gravity="center"
+                android:maxLines="1"
+                android:paddingHorizontal="16dp"
+                android:tag="pill"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="@color/ls_ink"
+                app:drawableStartCompat="@drawable/ic_calendar"
+                app:drawableTint="@color/ls_ink" />
+
+            <ImageButton
+                android:id="@+id/btnNext"
+                style="@style/LS.CircleButton"
+                android:contentDescription="@string/next_period"
+                android:src="@drawable/ic_chevron_right" />
+        </LinearLayout>
+
+        <HorizontalScrollView
+            android:id="@+id/stripScroll"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:scrollbars="none">
+
+            <LinearLayout
+                android:id="@+id/strip"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" />
+        </HorizontalScrollView>
+
+        <!-- Stats (crossfaded on period switch) -->
+        <LinearLayout
+            android:id="@+id/stats"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/txtTotalLabel"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="24dp"
+                android:textAppearance="?attr/textAppearanceLabelLarge"
+                android:textColor="@color/ls_muted" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:baselineAligned="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/numHours"
+                    style="@style/LS.BigNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/LS.Unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unit_hours" />
+
+                <TextView
+                    android:id="@+id/numMinutes"
+                    style="@style/LS.BigNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/LS.Unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unit_minutes" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:baselineAligned="true"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/numApps"
+                    style="@style/LS.MidNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/LS.Unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unit_apps" />
+
+                <TextView
+                    android:id="@+id/numTitles"
+                    style="@style/LS.MidNumber"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content" />
+
+                <TextView
+                    style="@style/LS.Unit"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/unit_titles" />
+            </LinearLayout>
+
+            <com.dongzhongcen.listenstat.ui.BarChartView
+                android:id="@+id/chart"
+                android:layout_width="match_parent"
+                android:layout_height="140dp"
+                android:layout_marginTop="18dp" />
+
+            <LinearLayout
+                android:id="@+id/cardEmpty"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="22dp"
+                android:background="@drawable/bg_card_white"
+                android:gravity="center_horizontal"
+                android:orientation="vertical"
+                android:padding="28dp"
+                android:tag="glass"
+                android:visibility="gone">
+
+                <TextView
+                    style="@style/LS.Hand"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/empty_hand"
+                    android:textSize="22sp" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/empty_title"
+                    android:textAppearance="?attr/textAppearanceTitleMedium"
+                    android:textColor="@color/ls_ink" />
+
+                <TextView
+                    style="@style/LS.Body"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:gravity="center"
+                    android:text="@string/empty_body" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cardApps"
+                style="@style/LS.PeachCard"
+                android:layout_marginTop="22dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="6dp">
+
+                    <TextView
+                        style="@style/LS.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/section_apps" />
+
+                    <TextView
+                        style="@style/LS.Hand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hand_top" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/listApps"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/cardTitles"
+                style="@style/LS.PeachCard"
+                android:layout_marginTop="16dp">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal"
+                    android:paddingHorizontal="6dp">
+
+                    <TextView
+                        style="@style/LS.SectionTitle"
+                        android:layout_width="0dp"
+                        android:layout_height="wrap_content"
+                        android:layout_weight="1"
+                        android:text="@string/section_titles" />
+
+                    <TextView
+                        style="@style/LS.Hand"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/hand_top" />
+                </LinearLayout>
+
+                <LinearLayout
+                    android:id="@+id/listTitles"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:orientation="vertical" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

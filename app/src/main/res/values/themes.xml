@@ -1,39 +1,231 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="Theme.ListenStat" parent="Theme.Material3.DayNight.NoActionBar">
-        <item name="colorPrimary">@color/ls_primary</item>
-        <item name="colorOnPrimary">@color/ls_on_primary</item>
-        <item name="colorPrimaryContainer">@color/ls_primary_container</item>
-        <item name="colorOnPrimaryContainer">@color/ls_on_primary_container</item>
-        <item name="colorSecondary">@color/ls_secondary</item>
-        <item name="colorOnSecondary">@color/ls_on_secondary</item>
-        <item name="colorSecondaryContainer">@color/ls_secondary_container</item>
-        <item name="colorOnSecondaryContainer">@color/ls_on_secondary_container</item>
-        <item name="colorTertiary">@color/ls_tertiary</item>
-        <item name="colorTertiaryContainer">@color/ls_tertiary_container</item>
-        <item name="android:colorBackground">@color/ls_background</item>
-        <item name="colorOnBackground">@color/ls_on_background</item>
-        <item name="colorSurface">@color/ls_surface</item>
-        <item name="colorOnSurface">@color/ls_on_surface</item>
-        <item name="colorSurfaceVariant">@color/ls_surface_variant</item>
-        <item name="colorOnSurfaceVariant">@color/ls_on_surface_variant</item>
-        <item name="colorSurfaceContainerLow">@color/ls_surface_container_low</item>
+    <!-- Light-only warm theme; dynamic color is intentionally not applied. -->
+    <style name="Theme.ListenStat" parent="Theme.Material3.Light.NoActionBar">
+        <item name="colorPrimary">@color/ls_ink</item>
+        <item name="colorOnPrimary">@color/ls_white</item>
+        <item name="colorPrimaryContainer">@color/ls_mint</item>
+        <item name="colorOnPrimaryContainer">@color/ls_ink</item>
+        <item name="colorSecondary">@color/ls_muted</item>
+        <item name="colorOnSecondary">@color/ls_white</item>
+        <item name="colorSecondaryContainer">@color/ls_peach</item>
+        <item name="colorOnSecondaryContainer">@color/ls_ink</item>
+        <item name="colorTertiary">@color/ls_ink</item>
+        <item name="colorOnTertiary">@color/ls_white</item>
+        <item name="colorTertiaryContainer">@color/ls_pink</item>
+        <item name="colorOnTertiaryContainer">@color/ls_ink</item>
+        <item name="android:colorBackground">@color/ls_cream</item>
+        <item name="colorOnBackground">@color/ls_ink</item>
+        <item name="colorSurface">@color/ls_cream</item>
+        <item name="colorOnSurface">@color/ls_ink</item>
+        <item name="colorSurfaceVariant">@color/ls_peach</item>
+        <item name="colorOnSurfaceVariant">@color/ls_muted</item>
+        <item name="colorSurfaceContainerLowest">@color/ls_white</item>
+        <item name="colorSurfaceContainerLow">@color/ls_white</item>
         <item name="colorSurfaceContainer">@color/ls_surface_container</item>
         <item name="colorSurfaceContainerHigh">@color/ls_surface_container_high</item>
+        <item name="colorSurfaceContainerHighest">@color/ls_surface_container_highest</item>
+        <item name="colorSurfaceInverse">@color/ls_ink</item>
+        <item name="colorOnSurfaceInverse">@color/ls_cream</item>
+        <item name="colorPrimaryInverse">@color/ls_mint</item>
         <item name="colorOutline">@color/ls_outline</item>
-        <item name="colorOutlineVariant">@color/ls_outline_variant</item>
+        <item name="colorOutlineVariant">@color/ls_peach_line</item>
         <item name="android:statusBarColor">@android:color/transparent</item>
         <item name="android:navigationBarColor">@android:color/transparent</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:fontFamily">@font/poppins</item>
+        <item name="fontFamily">@font/poppins</item>
+        <item name="bottomSheetDialogTheme">@style/ThemeOverlay.LS.BottomSheet</item>
+
+        <item name="textAppearanceDisplayLarge">@style/TextAppearance.LS.DisplayLarge</item>
+        <item name="textAppearanceDisplayMedium">@style/TextAppearance.LS.DisplayMedium</item>
+        <item name="textAppearanceDisplaySmall">@style/TextAppearance.LS.DisplaySmall</item>
+        <item name="textAppearanceHeadlineLarge">@style/TextAppearance.LS.HeadlineLarge</item>
+        <item name="textAppearanceHeadlineMedium">@style/TextAppearance.LS.HeadlineMedium</item>
+        <item name="textAppearanceHeadlineSmall">@style/TextAppearance.LS.HeadlineSmall</item>
+        <item name="textAppearanceTitleLarge">@style/TextAppearance.LS.TitleLarge</item>
+        <item name="textAppearanceTitleMedium">@style/TextAppearance.LS.TitleMedium</item>
+        <item name="textAppearanceTitleSmall">@style/TextAppearance.LS.TitleSmall</item>
+        <item name="textAppearanceBodyLarge">@style/TextAppearance.LS.BodyLarge</item>
+        <item name="textAppearanceBodyMedium">@style/TextAppearance.LS.BodyMedium</item>
+        <item name="textAppearanceBodySmall">@style/TextAppearance.LS.BodySmall</item>
+        <item name="textAppearanceLabelLarge">@style/TextAppearance.LS.LabelLarge</item>
+        <item name="textAppearanceLabelMedium">@style/TextAppearance.LS.LabelMedium</item>
+        <item name="textAppearanceLabelSmall">@style/TextAppearance.LS.LabelSmall</item>
     </style>
 
-    <style name="LS.Card" parent="Widget.Material3.CardView.Filled">
-        <item name="cardCornerRadius">24dp</item>
-        <item name="cardBackgroundColor">?attr/colorSurfaceContainerLow</item>
-        <item name="cardElevation">0dp</item>
+    <!-- Poppins everywhere (CJK glyphs fall back to the system font). -->
+    <style name="TextAppearance.LS.DisplayLarge" parent="TextAppearance.Material3.DisplayLarge"><item name="fontFamily">@font/poppins_semibold</item><item name="android:fontFamily">@font/poppins_semibold</item></style>
+    <style name="TextAppearance.LS.DisplayMedium" parent="TextAppearance.Material3.DisplayMedium"><item name="fontFamily">@font/poppins_semibold</item><item name="android:fontFamily">@font/poppins_semibold</item></style>
+    <style name="TextAppearance.LS.DisplaySmall" parent="TextAppearance.Material3.DisplaySmall"><item name="fontFamily">@font/poppins_semibold</item><item name="android:fontFamily">@font/poppins_semibold</item></style>
+    <style name="TextAppearance.LS.HeadlineLarge" parent="TextAppearance.Material3.HeadlineLarge"><item name="fontFamily">@font/poppins_semibold</item><item name="android:fontFamily">@font/poppins_semibold</item></style>
+    <style name="TextAppearance.LS.HeadlineMedium" parent="TextAppearance.Material3.HeadlineMedium"><item name="fontFamily">@font/poppins_semibold</item><item name="android:fontFamily">@font/poppins_semibold</item></style>
+    <style name="TextAppearance.LS.HeadlineSmall" parent="TextAppearance.Material3.HeadlineSmall"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.TitleLarge" parent="TextAppearance.Material3.TitleLarge"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.TitleMedium" parent="TextAppearance.Material3.TitleMedium"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.TitleSmall" parent="TextAppearance.Material3.TitleSmall"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.BodyLarge" parent="TextAppearance.Material3.BodyLarge"><item name="fontFamily">@font/poppins_regular</item><item name="android:fontFamily">@font/poppins_regular</item></style>
+    <style name="TextAppearance.LS.BodyMedium" parent="TextAppearance.Material3.BodyMedium"><item name="fontFamily">@font/poppins_regular</item><item name="android:fontFamily">@font/poppins_regular</item></style>
+    <style name="TextAppearance.LS.BodySmall" parent="TextAppearance.Material3.BodySmall"><item name="fontFamily">@font/poppins_regular</item><item name="android:fontFamily">@font/poppins_regular</item></style>
+    <style name="TextAppearance.LS.LabelLarge" parent="TextAppearance.Material3.LabelLarge"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.LabelMedium" parent="TextAppearance.Material3.LabelMedium"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+    <style name="TextAppearance.LS.LabelSmall" parent="TextAppearance.Material3.LabelSmall"><item name="fontFamily">@font/poppins_medium</item><item name="android:fontFamily">@font/poppins_medium</item></style>
+
+    <!-- Small playful handwritten labels (Latin/digits). -->
+    <style name="LS.Hand" parent="">
+        <item name="android:fontFamily">@font/shadows_into_light</item>
+        <item name="fontFamily">@font/shadows_into_light</item>
+        <item name="android:textSize">17sp</item>
+        <item name="android:textColor">@color/ls_ink</item>
+    </style>
+
+    <style name="LS.BigTitle" parent="">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">40sp</item>
+        <item name="android:lineSpacingMultiplier">0.92</item>
+        <item name="android:textColor">@color/ls_ink</item>
+        <item name="android:includeFontPadding">false</item>
     </style>
 
     <style name="LS.SectionTitle" parent="">
         <item name="android:textAppearance">?attr/textAppearanceTitleMedium</item>
-        <item name="android:textColor">?attr/colorOnSurface</item>
+        <item name="android:textColor">@color/ls_ink</item>
+    </style>
+
+    <style name="LS.Body" parent="">
+        <item name="android:textAppearance">?attr/textAppearanceBodyMedium</item>
+        <item name="android:textColor">@color/ls_muted</item>
+        <item name="android:lineSpacingMultiplier">1.15</item>
+    </style>
+
+    <style name="LS.BigNumber" parent="">
+        <item name="android:fontFamily">@font/poppins_semibold</item>
+        <item name="android:textSize">36sp</item>
+        <item name="android:textColor">@color/ls_ink</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:includeFontPadding">false</item>
+    </style>
+
+    <style name="LS.MidNumber" parent="LS.BigNumber">
+        <item name="android:textSize">22sp</item>
+    </style>
+
+    <style name="LS.Unit" parent="">
+        <item name="android:fontFamily">@font/poppins_regular</item>
+        <item name="android:textSize">13sp</item>
+        <item name="android:textColor">@color/ls_muted</item>
+        <item name="android:layout_marginStart">4dp</item>
+        <item name="android:layout_marginEnd">18dp</item>
+    </style>
+
+    <!-- Black pill button / outlined pill button -->
+    <style name="LS.Button" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ls_ink</item>
+        <item name="android:textColor">@color/ls_white</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:minHeight">48dp</item>
+        <item name="android:paddingStart">22dp</item>
+        <item name="android:paddingEnd">22dp</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="LS.Button.Outlined" parent="Widget.Material3.Button.OutlinedButton">
+        <item name="android:textColor">@color/ls_ink</item>
+        <item name="strokeColor">@color/ls_ink</item>
+        <item name="strokeWidth">1dp</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:minHeight">48dp</item>
+    </style>
+
+    <style name="LS.Button.OnInk" parent="Widget.Material3.Button.TextButton">
+        <item name="android:textColor">@color/ls_white</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:minHeight">44dp</item>
+    </style>
+
+    <style name="LS.Button.WhiteOnInk" parent="Widget.Material3.Button">
+        <item name="backgroundTint">@color/ls_white</item>
+        <item name="android:textColor">@color/ls_ink</item>
+        <item name="cornerRadius">100dp</item>
+        <item name="android:minHeight">44dp</item>
+        <item name="elevation">0dp</item>
+    </style>
+
+    <style name="LS.CircleButton" parent="">
+        <item name="android:layout_width">44dp</item>
+        <item name="android:layout_height">44dp</item>
+        <item name="android:background">@drawable/bg_circle_ink</item>
+        <item name="android:padding">11dp</item>
+        <item name="android:scaleType">fitCenter</item>
+        <item name="tint">@color/ls_white</item>
+    </style>
+
+    <!-- Mint bottom sheets with a big radius -->
+    <style name="ThemeOverlay.LS.BottomSheet" parent="ThemeOverlay.Material3.BottomSheetDialog">
+        <item name="bottomSheetStyle">@style/LS.BottomSheet</item>
+        <item name="android:navigationBarColor">@color/ls_mint</item>
+    </style>
+
+    <style name="LS.BottomSheet" parent="Widget.Material3.BottomSheet.Modal">
+        <item name="backgroundTint">@color/ls_mint</item>
+        <item name="shapeAppearance">@style/LS.SheetShape</item>
+    </style>
+
+    <style name="LS.SheetShape" parent="">
+        <item name="cornerFamily">rounded</item>
+        <item name="cornerSizeTopLeft">32dp</item>
+        <item name="cornerSizeTopRight">32dp</item>
+        <item name="cornerSizeBottomLeft">0dp</item>
+        <item name="cornerSizeBottomRight">0dp</item>
+    </style>
+
+    <style name="LS.Chip" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">40dp</item>
+        <item name="android:layout_marginEnd">8dp</item>
+        <item name="android:minWidth">64dp</item>
+        <item name="android:gravity">center</item>
+        <item name="android:paddingStart">20dp</item>
+        <item name="android:paddingEnd">20dp</item>
+        <item name="android:background">@drawable/bg_pill_outline_peach</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelLarge</item>
+        <item name="android:textColor">@color/ls_ink</item>
+        <item name="android:clickable">true</item>
+        <item name="android:focusable">true</item>
+    </style>
+
+    <style name="LS.SmallPill" parent="">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@drawable/bg_pill_white</item>
+        <item name="android:paddingStart">12dp</item>
+        <item name="android:paddingEnd">12dp</item>
+        <item name="android:paddingTop">5dp</item>
+        <item name="android:paddingBottom">5dp</item>
+        <item name="android:maxLines">1</item>
+        <item name="android:fontFeatureSettings">tnum</item>
+        <item name="android:textAppearance">?attr/textAppearanceLabelMedium</item>
+        <item name="android:textColor">@color/ls_ink</item>
+    </style>
+
+    <style name="LS.PeachCard" parent="">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:orientation">vertical</item>
+        <item name="android:background">@drawable/bg_card_peach</item>
+        <item name="android:paddingLeft">14dp</item>
+        <item name="android:paddingRight">14dp</item>
+        <item name="android:paddingBottom">14dp</item>
+        <item name="android:paddingTop">18dp</item>
+        <item name="android:tag">glass</item>
+    </style>
+
+    <style name="LS.MintCard" parent="LS.PeachCard">
+        <item name="android:background">@drawable/bg_card_mint</item>
+    </style>
+
+    <style name="LS.WhiteCard" parent="LS.PeachCard">
+        <item name="android:background">@drawable/bg_card_white</item>
     </style>
 </resources>
