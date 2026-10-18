@@ -9,6 +9,7 @@ import android.widget.Toast
 import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.lifecycleScope
 import com.dongzhongcen.listenstat.data.AppDatabase
+import com.dongzhongcen.listenstat.R
 import com.dongzhongcen.listenstat.databinding.ActivityMainBinding
 import com.dongzhongcen.listenstat.service.MediaTrackService
 import java.time.LocalDate
