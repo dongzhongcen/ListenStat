@@ -1,6 +1,7 @@
 package com.dongzhongcen.listenstat.service
 
 import android.app.ActivityManager
+import android.app.Notification
 import android.content.ComponentName
 import android.content.Context
 import android.content.SharedPreferences
@@ -11,6 +12,7 @@ import android.media.session.MediaSession
 import android.media.session.MediaSessionManager
 import android.media.session.PlaybackState
 import android.os.Build
+import android.os.Parcelable
 import android.os.Handler
 import android.os.HandlerThread
 import android.os.SystemClock
@@ -34,7 +36,9 @@ import org.json.JSONObject
 
 /**
  * Uses notification-listener permission to attach MediaSessionManager callbacks
- * and accumulate local play time. Nothing is uploaded.
+ * (and media-style notification session tokens as a supplement) and accumulate
+ * local play time for any app that publishes a system media session. Skips this
+ * app's own package. Nothing is uploaded.
  *
  * Low-power design (event-driven, no polling):
  * - No periodic timer while playing. The start of a segment is kept in memory and
@@ -123,7 +127,12 @@ class MediaTrackService : NotificationListenerService() {
         super.onDestroy()
     }
 
-    override fun onNotificationPosted(sbn: StatusBarNotification?) = Unit
+    override fun onNotificationPosted(sbn: StatusBarNotification?) {
+        val n = sbn ?: return
+        if (n.packageName == packageName) return
+        handler.post { maybeTrackFromNotification(n) }
+    }
+
     override fun onNotificationRemoved(sbn: StatusBarNotification?) = Unit
 
     // ---- controller bookkeeping (handler thread) ----
@@ -137,11 +146,30 @@ class MediaTrackService : NotificationListenerService() {
 
     private fun syncControllers(controllers: List<MediaController>) {
         val current = controllers.associateBy { it.sessionToken }
-        tracked.keys.filter { it !in current }.forEach { untrack(it) }
+        tracked.keys.filter { it !in current }.forEach { token ->
+            // Keep sessions discovered via media-style notifications until they
+            // stop / destroy; getActiveSessions may lag behind the notification.
+            val state = tracked[token]?.controller?.playbackState?.state
+            if (state == PlaybackState.STATE_PLAYING || state in TRANSIENT_STATES) return@forEach
+            untrack(token)
+        }
 
-        current.forEach { (token, controller) ->
-            if (token in tracked) return@forEach
-            val cb = object : MediaController.Callback() {
+        current.forEach { (_, controller) ->
+            trackController(controller)
+        }
+        publishLive()
+    }
+
+    /**
+     * Register one MediaController. Skips ListenStat itself. Also used when a
+     * media-style notification exposes a session token that getActiveSessions
+     * had not yet delivered.
+     */
+    private fun trackController(controller: MediaController) {
+        val token = controller.sessionToken
+        if (token in tracked) return
+        if (controller.packageName == packageName) return
+        val cb = object : MediaController.Callback() {
                 override fun onPlaybackStateChanged(state: PlaybackState?) {
                     handleState(token, state)
                 }
@@ -155,11 +183,33 @@ class MediaTrackService : NotificationListenerService() {
                     publishLive()
                 }
             }
-            controller.registerCallback(cb, handler)
-            tracked[token] = Tracked(controller, cb)
-            handleState(token, controller.playbackState)
+        controller.registerCallback(cb, handler)
+        tracked[token] = Tracked(controller, cb)
+        handleState(token, controller.playbackState)
+    }
+
+    /**
+     * Small supplement: some players put a MediaSession token on a media-style
+     * notification before (or without) it showing up in getActiveSessions.
+     * Stay on MediaSession + NotificationListener — no audio capture.
+     */
+    private fun maybeTrackFromNotification(sbn: StatusBarNotification) {
+        if (sbn.packageName == packageName) return
+        val token = mediaSessionToken(sbn.notification) ?: return
+        if (token in tracked) return
+        try {
+            trackController(MediaController(this, token))
+            publishLive()
+        } catch (_: Exception) {
+            // Token invalid / session already gone
         }
-        publishLive()
+    }
+
+    @Suppress("DEPRECATION")
+    private fun mediaSessionToken(notification: Notification): MediaSession.Token? {
+        val extras = notification.extras ?: return null
+        val raw: Parcelable? = extras.getParcelable(Notification.EXTRA_MEDIA_SESSION)
+        return raw as? MediaSession.Token
     }
 
     private fun untrack(token: MediaSession.Token) {
@@ -177,7 +227,7 @@ class MediaTrackService : NotificationListenerService() {
             PlaybackState.STATE_PLAYING -> {
                 cancelGrace(token)
                 cur?.transientSinceElapsed = -1
-                val meta = readMeta(t.controller.metadata)
+                val meta = resolvedMeta(t.controller, t.controller.metadata)
                 if (cur == null) {
                     startSegment(t.controller, meta)
                 } else if (cur.title != meta.first || cur.artist != meta.second) {
@@ -205,7 +255,7 @@ class MediaTrackService : NotificationListenerService() {
     private fun handleMetadata(token: MediaSession.Token, metadata: MediaMetadata?) {
         val t = tracked[token] ?: return
         val cur = open[token] ?: return // not playing: nothing to split
-        val meta = readMeta(metadata)
+        val meta = resolvedMeta(t.controller, metadata)
         if (cur.title == meta.first && cur.artist == meta.second) return // artwork/duration update
         val wasTransient = cur.transientSinceElapsed >= 0
         cancelGrace(token)
@@ -237,11 +287,12 @@ class MediaTrackService : NotificationListenerService() {
     }
 
     private fun startSegment(controller: MediaController, meta: Pair<String, String>): Segment {
+        val label = appLabel(controller.packageName)
         val seg = Segment(
             id = UUID.randomUUID().toString(),
             token = controller.sessionToken,
             packageName = controller.packageName,
-            appLabel = appLabel(controller.packageName),
+            appLabel = label,
             title = meta.first,
             artist = meta.second,
             startedAtMs = System.currentTimeMillis(),
@@ -251,6 +302,16 @@ class MediaTrackService : NotificationListenerService() {
         // The only "in progress" disk write: one small async prefs entry per segment.
         prefs.edit().putString(KEY_SEG_PREFIX + seg.id, seg.toJson().toString()).apply()
         return seg
+    }
+
+    /**
+     * Resolve display title/artist. Blank MediaMetadata title falls back to the
+     * app label (artist cleared) so the segment still persists when duration >= MIN.
+     */
+    private fun resolvedMeta(controller: MediaController, metadata: MediaMetadata?): Pair<String, String> {
+        val raw = readMeta(metadata)
+        if (raw.first.isNotBlank()) return raw
+        return appLabel(controller.packageName) to ""
     }
 
     private fun endSegment(seg: Segment, endedAtMs: Long) {

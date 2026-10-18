@@ -15,9 +15,9 @@
     <string name="menu">菜单</string>
 
     <string name="open_permission">去开启通知使用权</string>
-    <string name="enable_listenstat">请开启 ListenStat 的通知使用权，才能统计控制中心正在播放的内容。</string>
+    <string name="enable_listenstat">请开启 ListenStat 的通知使用权，才能统计系统正在播放的媒体会话。</string>
     <string name="permission_title">还差一步</string>
-    <string name="permission_body">ListenStat 需要「通知使用权」来读取系统正在播放的媒体会话。数据只保存在本机，不上传。</string>
+    <string name="permission_body">需要「通知使用权」读取系统媒体会话（音乐、播客、视频、浏览器等）。数据只留本机。</string>
 
     <string name="range_day">日</string>
     <string name="range_month">月</string>
@@ -40,7 +40,7 @@
     <string name="hand_top">top 20</string>
     <string name="empty_hand">shh… nothing yet</string>
     <string name="empty_title">这里还很安静</string>
-    <string name="empty_body">先放一段有声书或音乐，回来就能看到统计。</string>
+    <string name="empty_body">用任意会发布系统媒体会话的应用播放一会儿，回来就能看到统计。</string>
 
     <string name="now_listening">正在听</string>
     <string name="live_idle">当前未在播放</string>
@@ -61,7 +61,7 @@
     <string name="ach_view">查看</string>
 
     <string name="wallpaper_title">壁纸背景</string>
-    <string name="wallpaper_body">从相册选一张图作为背景（系统照片选择器，无需存储权限）。图片复制到应用私有目录，不会上传。</string>
+    <string name="wallpaper_body">系统照片选择器选图，无需存储权限。</string>
     <string name="wallpaper_pick">选择图片</string>
     <string name="wallpaper_remove">移除</string>
     <string name="wallpaper_blur">模糊</string>
@@ -71,7 +71,7 @@
     <string name="wallpaper_failed">无法读取这张图片</string>
 
     <string name="update_title">检查更新</string>
-    <string name="update_body">只访问 GitHub Releases 获取最新版本号，不上传任何数据。</string>
+    <string name="update_body">仅查询 GitHub Releases，不上传数据。</string>
     <string name="update_auto">打开应用时自动检查（每天最多一次）</string>
     <string name="update_check_now">检查更新</string>
     <string name="update_checking">正在检查…</string>
@@ -89,7 +89,7 @@
     <string name="update_hand">new!</string>
 
     <string name="backup_title">备份与恢复</string>
-    <string name="backup_body">把所有收听记录、成就和设置导出为一个 JSON 文件，保存位置由你在系统文件选择器中决定；导入时自动合并，不会产生重复记录。</string>
+    <string name="backup_body">导出 JSON；导入时自动合并去重。</string>
     <string name="backup_open">备份 / 恢复</string>
     <string name="backup_export">导出</string>
     <string name="backup_import">导入</string>
@@ -105,7 +105,7 @@
 
     <string name="about_title">关于</string>
     <string name="about_version_fmt">ListenStat 听时 · 版本 %1$s</string>
-    <string name="about_body">本地统计 · 不上传 · 后台省电。联网仅用于检查 GitHub 上的新版本。</string>
+    <string name="about_body">任意发布系统媒体会话的应用均可统计；系统无会话时无法记录。本地 · 不上传 · 联网仅查版本。</string>
     <string name="about_github">GitHub</string>
     <string name="about_licenses">字体许可</string>
     <string name="close">关闭</string>
