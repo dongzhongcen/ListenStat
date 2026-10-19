@@ -19,7 +19,7 @@ sealed class UpdateResult {
 }
 
 /**
- * The app's ONLY network call: GET the latest (non-prerelease) GitHub Release.
+ * Optional network call (independent of cloud sync): GET the latest (non-prerelease) GitHub Release.
  * Nothing is uploaded; no identifiers or statistics are sent.
  */
 object UpdateChecker {

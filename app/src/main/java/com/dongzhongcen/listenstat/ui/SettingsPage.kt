@@ -3,11 +3,13 @@ package com.dongzhongcen.listenstat.ui
 import android.content.Intent
 import android.provider.Settings
 import android.text.format.DateUtils
+import android.view.inputmethod.EditorInfo
 import androidx.core.view.isVisible
 import com.dongzhongcen.listenstat.BuildConfig
 import com.dongzhongcen.listenstat.R
 import com.dongzhongcen.listenstat.databinding.PageSettingsBinding
 import com.dongzhongcen.listenstat.settings.AppSettings
+import com.dongzhongcen.listenstat.sync.SyncApi
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.android.material.slider.Slider
 
@@ -16,6 +18,8 @@ class SettingsPage(
     private val b: PageSettingsBinding,
     private val settings: AppSettings
 ) {
+    private var syncUiReady = false
+
     fun init() {
         b.txtVersion.text = activity.getString(R.string.about_version_fmt, BuildConfig.VERSION_NAME)
 
@@ -40,6 +44,35 @@ class SettingsPage(
         b.switchAutoUpdate.isChecked = settings.autoUpdateCheck
         b.switchAutoUpdate.setOnCheckedChangeListener { _, on -> settings.autoUpdateCheck = on }
         b.btnCheckUpdate.setOnClickListener { activity.checkUpdate(manual = true) }
+
+        // Cloud sync (default off)
+        b.switchCloudSync.isChecked = settings.cloudSyncEnabled
+        b.editDisplayName.setText(settings.displayName)
+        b.editSyncBase.setText(settings.syncBaseUrl)
+        b.switchCloudSync.setOnCheckedChangeListener { _, on ->
+            if (!syncUiReady) return@setOnCheckedChangeListener
+            if (on) {
+                persistSyncFields()
+                settings.cloudSyncEnabled = true
+                activity.onCloudSyncEnabled()
+            } else {
+                settings.cloudSyncEnabled = false
+                b.txtSyncStatus.setText(R.string.sync_status_off)
+            }
+        }
+        b.editDisplayName.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) commitDisplayName()
+        }
+        b.editDisplayName.setOnEditorActionListener { _, actionId, _ ->
+            if (actionId == EditorInfo.IME_ACTION_DONE) {
+                commitDisplayName()
+                true
+            } else false
+        }
+        b.editSyncBase.setOnFocusChangeListener { _, hasFocus ->
+            if (!hasFocus) persistSyncFields()
+        }
+        syncUiReady = true
 
         b.btnBackup.setOnClickListener {
             Sheets.backup(activity, onExport = { activity.exportBackup() }, onImport = { activity.importBackup() })
@@ -66,7 +99,41 @@ class SettingsPage(
         )
         val on = activity.isNotificationAccessEnabled()
         b.txtAccess.setText(if (on) R.string.access_on else R.string.access_off)
+
+        // Sync UI — avoid feedback loops while programmatically setting the switch
+        syncUiReady = false
+        b.switchCloudSync.isChecked = settings.cloudSyncEnabled
+        if (b.editDisplayName.text.isNullOrEmpty() || !b.editDisplayName.hasFocus()) {
+            b.editDisplayName.setText(settings.displayName)
+        }
+        if (!b.editSyncBase.hasFocus()) {
+            b.editSyncBase.setText(settings.syncBaseUrl)
+        }
+        b.txtSyncStatus.setText(
+            if (settings.cloudSyncEnabled) R.string.sync_status_on else R.string.sync_status_off
+        )
+        syncUiReady = true
+
         Ui.applyGlass(b.root)
+    }
+
+    fun setSyncStatus(text: String) {
+        b.txtSyncStatus.text = text
+    }
+
+    private fun persistSyncFields() {
+        val name = b.editDisplayName.text?.toString().orEmpty()
+        settings.displayName = name
+        val base = b.editSyncBase.text?.toString().orEmpty().ifBlank { SyncApi.DEFAULT_BASE_URL }
+        settings.syncBaseUrl = base
+    }
+
+    private fun commitDisplayName() {
+        val previous = settings.displayName
+        persistSyncFields()
+        if (settings.cloudSyncEnabled && settings.displayName != previous && settings.displayName.isNotBlank()) {
+            activity.onDisplayNameChanged(settings.displayName)
+        }
     }
 
     private fun showLicenses() {

@@ -26,6 +26,7 @@ import com.dongzhongcen.listenstat.backup.BackupManager
 import com.dongzhongcen.listenstat.databinding.ActivityMainBinding
 import com.dongzhongcen.listenstat.service.MediaTrackService
 import com.dongzhongcen.listenstat.settings.AppSettings
+import com.dongzhongcen.listenstat.sync.SyncManager
 import com.dongzhongcen.listenstat.update.UpdateChecker
 import com.dongzhongcen.listenstat.update.UpdateResult
 import com.google.android.material.snackbar.Snackbar
@@ -45,6 +46,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var settingsPage: SettingsPage
     private lateinit var appDetailPage: AppDetailPage
     private val settings by lazy { AppSettings(this) }
+    private val syncManager by lazy { SyncManager(this) }
     private val wallpaperStore by lazy { WallpaperStore(this) }
     private var wallpaperBitmap: Bitmap? = null
     private var page = Page.STATS
@@ -105,7 +107,10 @@ class MainActivity : AppCompatActivity() {
         applyInsets()
         applyWallpaper()
 
-        if (savedInstanceState == null) maybeAutoCheckUpdate()
+        if (savedInstanceState == null) {
+            maybeAutoCheckUpdate()
+            maybeDailyCloudPush()
+        }
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -127,6 +132,7 @@ class MainActivity : AppCompatActivity() {
 
     override fun onStop() {
         statsPage.onStop()
+        maybePushOnLeave()
         super.onStop()
     }
 
@@ -136,6 +142,10 @@ class MainActivity : AppCompatActivity() {
         if (::appDetailPage.isInitialized && appDetailPage.isOpen) {
             // Close without restoring the previous tab — we are switching tabs.
             appDetailPage.close()
+        }
+        // Simple sync trigger: leaving stats/settings while sync is on.
+        if (page != p && (page == Page.STATS || page == Page.SETTINGS)) {
+            maybePushOnLeave()
         }
         page = p
         val views = mapOf(
@@ -218,7 +228,7 @@ class MainActivity : AppCompatActivity() {
         }
     }
 
-    // ---- update check (the only network access) ----
+    // ---- update check (separate from optional cloud sync) ----
 
     private fun maybeAutoCheckUpdate() {
         if (!settings.autoUpdateCheck) return
@@ -279,6 +289,51 @@ class MainActivity : AppCompatActivity() {
             }
             snack(msg)
         }
+    }
+
+
+    // ---- optional cloud sync (default off; no traffic when disabled) ----
+
+    fun onCloudSyncEnabled() {
+        settingsPage.setSyncStatus(getString(R.string.sync_enabling))
+        lifecycleScope.launch {
+            val outcome = withContext(Dispatchers.IO) { syncManager.enableAndSync() }
+            when (outcome) {
+                is SyncManager.Outcome.Ok -> {
+                    settingsPage.setSyncStatus(getString(R.string.sync_ok_fmt, outcome.detail))
+                    snack(getString(R.string.sync_ok_fmt, outcome.detail))
+                    statsPage.reload()
+                }
+                is SyncManager.Outcome.Err -> {
+                    settings.cloudSyncEnabled = false
+                    settingsPage.refresh()
+                    settingsPage.setSyncStatus(getString(R.string.sync_failed_fmt, outcome.message))
+                    snack(getString(R.string.sync_failed_fmt, outcome.message))
+                }
+                SyncManager.Outcome.Skipped -> settingsPage.refresh()
+            }
+        }
+    }
+
+    fun onDisplayNameChanged(name: String) {
+        lifecycleScope.launch {
+            val outcome = withContext(Dispatchers.IO) { syncManager.patchDisplayName(name) }
+            when (outcome) {
+                is SyncManager.Outcome.Ok -> snack(getString(R.string.sync_name_saved))
+                is SyncManager.Outcome.Err -> snack(getString(R.string.sync_failed_fmt, outcome.message))
+                SyncManager.Outcome.Skipped -> Unit
+            }
+        }
+    }
+
+    private fun maybePushOnLeave() {
+        if (!settings.cloudSyncEnabled) return
+        lifecycleScope.launch(Dispatchers.IO) { syncManager.maybePush() }
+    }
+
+    private fun maybeDailyCloudPush() {
+        if (!settings.cloudSyncEnabled) return
+        lifecycleScope.launch(Dispatchers.IO) { syncManager.maybeDailyPush() }
     }
 
     // ---- wallpaper ----

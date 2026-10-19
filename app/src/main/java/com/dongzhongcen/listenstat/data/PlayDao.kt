@@ -34,6 +34,14 @@ data class TimeSpan(
     val endedAtMs: Long
 )
 
+
+data class PackageTitleDayTotal(
+    val packageName: String,
+    val title: String,
+    val dayKey: String,
+    val totalMs: Long
+)
+
 @Dao
 interface PlayDao {
     @Insert
@@ -185,4 +193,32 @@ interface PlayDao {
 
     @Query("SELECT startedAtMs, packageName, title FROM play_sessions")
     suspend fun allKeys(): List<SessionKey>
+    // ---- cloud sync (day aggregates) ----
+
+    @Query(
+        """
+        SELECT packageName, title, dayKey, SUM(durationMs) AS totalMs
+        FROM play_sessions
+        GROUP BY packageName, title, dayKey
+        """
+    )
+    suspend fun dayAggregatesForSync(): List<PackageTitleDayTotal>
+
+    @Query(
+        """
+        SELECT SUM(durationMs) FROM play_sessions
+        WHERE packageName = :packageName AND title = :title AND dayKey = :dayKey
+        """
+    )
+    suspend fun sumDuration(packageName: String, title: String, dayKey: String): Long?
+
+    @Query(
+        """
+        SELECT * FROM play_sessions
+        WHERE startedAtMs = :startedAtMs AND packageName = :packageName AND title = :title
+        LIMIT 1
+        """
+    )
+    suspend fun findByKey(startedAtMs: Long, packageName: String, title: String): PlaySession?
+
 }

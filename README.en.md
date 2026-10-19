@@ -4,7 +4,7 @@
 
 **Local Android media play-time tracker (听时)**
 
-*Day / month / year (any date) · app & title Top 20 · achievements · data stays on device*
+*Day / month / year (any date) · app & title Top 20 · achievements · local by default · optional cloud sync*
 
 [简体中文](README.md) | **English**
 
@@ -14,6 +14,8 @@
 </div>
 
 ## Status
+
+**v0.2.3** — optional cloud sync (off by default in Settings). When enabled, registers with a stable device id against a self-hosted sync API and push/pulls day listening aggregates (package, title, day, duration). Wallpaper images are never uploaded. With sync off, behaviour matches the local-only app. Built on v0.2.2.
 
 **v0.2.2** — tap an app in the Top-apps ranking to open a local detail screen: period total, titles under that package, and the same day/month/year switching as the stats page. Built on v0.2.1.
 
@@ -29,20 +31,31 @@ ListenStat reads system media sessions (same source as the control-center media 
 - **Achievements** (local only): first listen, 1 / 10 / 100 / 500 hours total, 3 / 7 / 30-day streaks, 3 hours in one day, night owl (listening 0–5 am), 50 different titles… computed from local data when the app is opened or resumed, with a subtle notice when one unlocks
 - **Wallpaper background**: pick an image with the system photo picker, adjust blur and veil; cards turn semi-transparent; removable any time
 - **Backup / restore**: export to a JSON file; import merges without duplicates
-- **Update check**: on app open (at most once a day) or manually, against GitHub Releases; can be turned off in Settings
+- **Update check**: on app open (at most once a day) or manually, against GitHub Releases; can be turned off in Settings (independent of cloud sync)
+- **Cloud sync (optional, off by default)**: when enabled in Settings, registers the device and syncs day listening aggregates; with the toggle off, no sync network traffic. Wallpaper is never uploaded
 
 ## Permissions & privacy
 
 | Permission | Purpose |
 | --- | --- |
 | Notification Listener access | read system media sessions (required for tracking) |
-| `INTERNET` | **only** to query GitHub Releases for a newer version |
+| `INTERNET` | (1) optional GitHub Releases update check; (2) optional cloud sync API when the user turns sync on |
 
-- Local Room database only (package name, title, artist, timestamps)
-- **No data is uploaded**, no account, no analytics/ads SDK; the update check only reads public release info and sends no statistics or identifiers
+- By default all records stay in the on-device Room database (package name, title, artist, timestamps)
+- **Cloud sync is off by default.** With it off, nothing is uploaded and no sync endpoints are called
+- When sync is on, the app uploads a stable device id, an optional display name, and day aggregates (`package` / `title` / `day` / `duration_ms`). **Wallpaper images are never uploaded.** No ads or third-party analytics SDK
+- Update check is independent of sync and only reads public release metadata
+- The sync device token is stored in EncryptedSharedPreferences (or equivalent private storage) and is never written to logs
 - Wallpaper comes from the system photo picker and is copied into app-private storage; backups are read/written via the system file picker — **no storage or media permission**
 - No notification permission, no foreground service, no persistent notification
 - Uninstalling the app removes all data
+
+### Cloud sync notes
+
+1. Settings → “云端同步” (Cloud sync) toggle (default off) → on enable, register + initial push/pull
+2. Optional display name; renaming while sync is on PATCHes the server
+3. Advanced: server base URL (default `https://jiketianxiawang.top`). Debug builds may use `http://IP` for lab testing; release is HTTPS-only
+4. Pull merge: per `record_id` (derived from package+title+day) keep the **max** of local vs remote duration — if remote is larger, insert a synthetic session for the gap only; **never delete or shorten existing local rows**
 
 ## Backup & restore
 
@@ -52,7 +65,7 @@ ListenStat reads system media sessions (same source as the control-center media 
 
 ## Upgrading
 
-- v0.2.2 / v0.2.1 / v0.2.0 are signed with **the same certificate** as v0.1.0 / v0.1.1-test, so they install over them **in place — no uninstall, all records kept**
+- v0.2.3 / v0.2.2 / v0.2.1 / v0.2.0 are signed with **the same certificate** as v0.1.0 / v0.1.1-test, so they install over them **in place — no uninstall, all records kept**
 - The database moves from version 1 to 2 with an explicit migration (adds an achievements table and a de-dup index); existing data is never dropped. Schemas are exported under `app/schemas/`
 
 ## Limits
@@ -68,7 +81,7 @@ ListenStat reads system media sessions (same source as the control-center media 
 - While playing, only the start time is kept in memory; one database write when the segment ends; segments under 3 s are ignored
 - If the process is killed, the next start finalizes the last segment using the system-recorded exit time (no invented time)
 - **No foreground service, no persistent notification, no wake lock**; the UI timer ticks only while the screen is visible and something is playing
-- Achievements are computed only when the app is opened/resumed (no background work); the only network use is the daily-at-most version check (can be disabled)
+- Achievements are computed only when the app is opened/resumed (no background work); by default the only network use is the daily-at-most version check (can be disabled); cloud sync must be turned on separately
 - Tip: only if the system keeps killing ListenStat and stats get interrupted, set it to "unrestricted" in battery optimization
 
 ## Build
