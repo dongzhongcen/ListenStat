@@ -88,6 +88,19 @@
     <string name="update_apk">下载 APK</string>
     <string name="update_hand">new!</string>
 
+
+    <string name="sync_title">云端同步</string>
+    <string name="sync_body">默认关闭。开启后会上传各日收听合计（应用包名、标题、日期、时长），用于多端合并；不含壁纸图片。关闭后行为与从前完全一致，不同步、不请求同步接口。</string>
+    <string name="sync_enable">开启云端同步</string>
+    <string name="sync_name_hint">显示名称（可选）</string>
+    <string name="sync_base_hint">服务器地址（高级，一般无需改）</string>
+    <string name="sync_status_off">未开启</string>
+    <string name="sync_status_on">已开启</string>
+    <string name="sync_enabling">正在注册并同步…</string>
+    <string name="sync_ok_fmt">同步完成：%1$s</string>
+    <string name="sync_failed_fmt">同步失败：%1$s</string>
+    <string name="sync_name_saved">显示名称已更新</string>
+
     <string name="backup_title">备份与恢复</string>
     <string name="backup_body">导出 JSON；导入时自动合并去重。</string>
     <string name="backup_open">备份 / 恢复</string>
@@ -105,7 +118,7 @@
 
     <string name="about_title">关于</string>
     <string name="about_version_fmt">ListenStat 听时 · 版本 %1$s</string>
-    <string name="about_body">任意发布系统媒体会话的应用均可统计；系统无会话时无法记录。本地 · 不上传 · 联网仅查版本。</string>
+    <string name="about_body">任意发布系统媒体会话的应用均可统计；系统无会话时无法记录。默认仅本地；云端同步需在设置中手动开启。</string>
     <string name="about_github">GitHub</string>
     <string name="about_licenses">字体许可</string>
     <string name="close">关闭</string>

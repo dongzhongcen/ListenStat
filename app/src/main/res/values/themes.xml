@@ -228,4 +228,8 @@
     <style name="LS.WhiteCard" parent="LS.PeachCard">
         <item name="android:background">@drawable/bg_card_white</item>
     </style>
+
+    <style name="LS.PinkCard" parent="LS.PeachCard">
+        <item name="android:background">@drawable/bg_card_pink</item>
+    </style>
 </resources>

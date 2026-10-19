@@ -169,6 +169,83 @@
             </LinearLayout>
         </LinearLayout>
 
+
+        <!-- Cloud sync (optional, default off) -->
+        <LinearLayout
+            style="@style/LS.PinkCard"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LS.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/sync_title" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/sync_body"
+                android:textColor="@color/ls_ink" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchCloudSync"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/sync_enable"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/ls_ink" />
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutDisplayName"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/sync_name_hint"
+                app:boxStrokeColor="@color/ls_ink"
+                app:hintTextColor="@color/ls_muted">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editDisplayName"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textPersonName"
+                    android:maxLength="128"
+                    android:textColor="@color/ls_ink" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <com.google.android.material.textfield.TextInputLayout
+                android:id="@+id/layoutSyncBase"
+                style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:hint="@string/sync_base_hint"
+                app:boxStrokeColor="@color/ls_ink"
+                app:hintTextColor="@color/ls_muted">
+
+                <com.google.android.material.textfield.TextInputEditText
+                    android:id="@+id/editSyncBase"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:inputType="textUri"
+                    android:textColor="@color/ls_ink" />
+            </com.google.android.material.textfield.TextInputLayout>
+
+            <TextView
+                android:id="@+id/txtSyncStatus"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/ls_ink" />
+        </LinearLayout>
+
         <!-- Backup -->
         <LinearLayout
             style="@style/LS.WhiteCard"
