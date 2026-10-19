@@ -2,7 +2,7 @@
 
 # ListenStat
 
-**Local Android listening-time tracker (听时)**
+**Local Android media play-time tracker (听时)**
 
 *Day / month / year (any date) · app & title Top 20 · achievements · data stays on device*
 
@@ -15,14 +15,14 @@
 
 ## Status
 
-**v0.2.0** — update check, wallpaper background, achievements, backup/restore, free date switching and a new warm UI. Test builds are on [Releases](https://github.com/dongzhongcen/ListenStat/releases) (pre-release `v0.2.0-test`).
+**v0.2.1** — track any app that publishes a system media session (music, podcasts, video, browsers that expose sessions; blank titles fall back to the app name), and shorter Settings copy. Built on v0.2.0. Test builds are on [Releases](https://github.com/dongzhongcen/ListenStat/releases) (pre-release `v0.2.1-test`).
 
 ## Overview
 
-ListenStat reads system media sessions (same source as the control-center media player) and accumulates play time **on device only**.
+ListenStat reads system media sessions (same source as the control-center media player) from **any** app that publishes one (music, podcasts, video players, browsers that expose sessions, etc.) and accumulates play time **on device only**. If the system has no media session, nothing can be recorded.
 
 - **Day / month / year**, and jump to **any day, month or year**: prev/next arrows, a horizontal date strip, or tap the date for a calendar / month / year picker
-- **Top 20 by app** and **Top 20 by title** (depends on the player writing media metadata)
+- **Top 20 by app** and **Top 20 by title** (title depends on the player writing media metadata; blank titles fall back to the app name)
 - "Now listening" card with the current segment and today's total; in-progress time is added to stats only when the selected period includes now
 - **Achievements** (local only): first listen, 1 / 10 / 100 / 500 hours total, 3 / 7 / 30-day streaks, 3 hours in one day, night owl (listening 0–5 am), 50 different titles… computed from local data when the app is opened or resumed, with a subtle notice when one unlocks
 - **Wallpaper background**: pick an image with the system photo picker, adjust blur and veil; cards turn semi-transparent; removable any time
@@ -50,8 +50,15 @@ ListenStat reads system media sessions (same source as the control-center media 
 
 ## Upgrading
 
-- v0.2.0 is signed with **the same certificate** as v0.1.0 / v0.1.1-test, so it installs over them **in place — no uninstall, all records kept**
+- v0.2.1 / v0.2.0 are signed with **the same certificate** as v0.1.0 / v0.1.1-test, so they install over them **in place — no uninstall, all records kept**
 - The database moves from version 1 to 2 with an explicit migration (adds an achievements table and a de-dup index); existing data is never dropped. Schemas are exported under `app/schemas/`
+
+## Limits
+
+- Android only; iOS cannot offer the same approach
+- Requires a system media session (MediaSession); apps that never publish one cannot be tracked
+- Title detail depends on `MediaMetadata`; blank titles fall back to the app name
+- Counts wall-clock time while the session is Playing
 
 ## Battery
 
