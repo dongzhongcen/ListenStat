@@ -244,6 +244,109 @@
                 android:layout_marginTop="8dp"
                 android:textAppearance="?attr/textAppearanceBodySmall"
                 android:textColor="@color/ls_ink" />
+
+            <TextView
+                android:id="@+id/txtPairState"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/ls_ink" />
+
+            <LinearLayout
+                android:id="@+id/groupPair"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:id="@+id/txtPairHelp"
+                    style="@style/LS.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/pair_help"
+                    android:textColor="@color/ls_ink" />
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:gravity="center_vertical"
+                    android:orientation="horizontal">
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnGeneratePairCode"
+                        style="@style/LS.Button"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="@string/pair_generate" />
+
+                    <com.google.android.material.button.MaterialButton
+                        android:id="@+id/btnCopyPairCode"
+                        style="@style/LS.Button.Outlined"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:layout_marginStart="8dp"
+                        android:text="@string/pair_copy"
+                        android:visibility="gone" />
+                </LinearLayout>
+
+                <TextView
+                    android:id="@+id/txtPairCode"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:letterSpacing="0.15"
+                    android:textAppearance="?attr/textAppearanceHeadlineSmall"
+                    android:textColor="@color/ls_ink"
+                    android:textStyle="bold"
+                    android:visibility="gone" />
+
+                <TextView
+                    android:id="@+id/txtPairExpires"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="4dp"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/ls_ink"
+                    android:visibility="gone" />
+
+                <com.google.android.material.textfield.TextInputLayout
+                    android:id="@+id/layoutClaimCode"
+                    style="@style/Widget.Material3.TextInputLayout.OutlinedBox"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="12dp"
+                    android:hint="@string/pair_claim_hint"
+                    app:boxStrokeColor="@color/ls_ink"
+                    app:hintTextColor="@color/ls_muted">
+
+                    <com.google.android.material.textfield.TextInputEditText
+                        android:id="@+id/editClaimCode"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:inputType="textCapCharacters"
+                        android:maxLength="16"
+                        android:textColor="@color/ls_ink" />
+                </com.google.android.material.textfield.TextInputLayout>
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnClaimPair"
+                    style="@style/LS.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="10dp"
+                    android:text="@string/pair_claim" />
+
+                <TextView
+                    android:id="@+id/txtPairMsg"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="8dp"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/ls_ink" />
+            </LinearLayout>
         </LinearLayout>
 
         <!-- Backup -->

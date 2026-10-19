@@ -53,9 +53,28 @@ class SyncCredentials(context: Context) {
         get() = plain.getLong(KEY_LAST_PUSH_MS, 0L)
         set(v) = plain.edit().putLong(KEY_LAST_PUSH_MS, v).apply()
 
+    /** True when /v1/me reports this device is linked into a shared account. */
+    var paired: Boolean
+        get() = plain.getBoolean(KEY_PAIRED, false)
+        set(v) = plain.edit().putBoolean(KEY_PAIRED, v).apply()
+
+    /** Shared account id when paired; otherwise null. */
+    var accountUserId: String?
+        get() = plain.getString(KEY_ACCOUNT_USER_ID, null)
+        set(v) {
+            val ed = plain.edit()
+            if (v.isNullOrBlank()) ed.remove(KEY_ACCOUNT_USER_ID) else ed.putString(KEY_ACCOUNT_USER_ID, v)
+            ed.apply()
+        }
+
     fun clearAuth() {
         secure.edit().remove(KEY_USER_ID).remove(KEY_TOKEN).apply()
-        plain.edit().remove(KEY_LAST_PULL).remove(KEY_LAST_PUSH_MS).apply()
+        plain.edit()
+            .remove(KEY_LAST_PULL)
+            .remove(KEY_LAST_PUSH_MS)
+            .remove(KEY_PAIRED)
+            .remove(KEY_ACCOUNT_USER_ID)
+            .apply()
     }
 
     companion object {
@@ -66,6 +85,8 @@ class SyncCredentials(context: Context) {
         private const val KEY_TOKEN = "device_token"
         private const val KEY_LAST_PULL = "last_pull_server_time"
         private const val KEY_LAST_PUSH_MS = "last_push_ms"
+        private const val KEY_PAIRED = "paired"
+        private const val KEY_ACCOUNT_USER_ID = "account_user_id"
 
         private fun createSecurePrefs(context: Context): SharedPreferences {
             return try {

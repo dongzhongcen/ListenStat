@@ -26,7 +26,20 @@ data class RegisterResult(
 data class MeResult(
     val userId: String,
     val displayName: String,
-    val deviceId: String
+    val deviceId: String,
+    val paired: Boolean = false,
+    val accountUserId: String? = null
+)
+
+data class PairCreateResult(
+    val code: String,
+    val expiresAt: String
+)
+
+data class PairClaimResult(
+    val userId: String,
+    val displayName: String,
+    val mergedRecords: Int
 )
 
 data class PushResult(val upserted: Int, val serverTime: String)
@@ -75,7 +88,9 @@ class SyncApi(private val baseUrlProvider: () -> String) {
             MeResult(
                 userId = json.getString("user_id"),
                 displayName = json.optString("display_name", ""),
-                deviceId = json.optString("device_id", "")
+                deviceId = json.optString("device_id", ""),
+                paired = json.optBoolean("paired", false),
+                accountUserId = json.optString("account_user_id").ifBlank { null }
             )
         } finally {
             conn.disconnect()
@@ -92,7 +107,9 @@ class SyncApi(private val baseUrlProvider: () -> String) {
             MeResult(
                 userId = json.getString("user_id"),
                 displayName = json.optString("display_name", ""),
-                deviceId = json.optString("device_id", "")
+                deviceId = json.optString("device_id", ""),
+                paired = json.optBoolean("paired", false),
+                accountUserId = json.optString("account_user_id").ifBlank { null }
             )
         } finally {
             conn.disconnect()
@@ -148,6 +165,39 @@ class SyncApi(private val baseUrlProvider: () -> String) {
                 )
             }
             PullResult(records = list, serverTime = json.optString("server_time", ""))
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+
+    fun pairCreate(token: String): PairCreateResult {
+        val conn = open("POST", "/v1/pair/create", token = token, jsonBody = JSONObject())
+        return try {
+            val code = conn.responseCode
+            val json = JSONObject(readBody(conn))
+            if (code !in 200..299) throw ApiException(code, json.optString("detail", "pair create failed"))
+            PairCreateResult(
+                code = json.getString("code"),
+                expiresAt = json.optString("expires_at", "")
+            )
+        } finally {
+            conn.disconnect()
+        }
+    }
+
+    fun pairClaim(token: String, pairCode: String): PairClaimResult {
+        val body = JSONObject().put("code", pairCode.trim())
+        val conn = open("POST", "/v1/pair/claim", token = token, jsonBody = body)
+        return try {
+            val code = conn.responseCode
+            val json = JSONObject(readBody(conn))
+            if (code !in 200..299) throw ApiException(code, json.optString("detail", "pair claim failed"))
+            PairClaimResult(
+                userId = json.getString("user_id"),
+                displayName = json.optString("display_name", ""),
+                mergedRecords = json.optInt("merged_records", 0)
+            )
         } finally {
             conn.disconnect()
         }

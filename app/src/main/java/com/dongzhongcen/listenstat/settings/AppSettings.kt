@@ -54,6 +54,14 @@ class AppSettings(context: Context) {
             prefs.edit().putString(KEY_SYNC_BASE, cleaned.ifBlank { SyncApi.DEFAULT_BASE_URL }).apply()
         }
 
+    /**
+     * Last known paired flag from /v1/me or a successful pair claim.
+     * UI-only cache; SyncCredentials holds the sync-authoritative copy.
+     */
+    var paired: Boolean
+        get() = prefs.getBoolean(KEY_PAIRED, false)
+        set(v) = prefs.edit().putBoolean(KEY_PAIRED, v).apply()
+
     companion object {
         private const val NAME = "listenstat_settings"
         const val KEY_AUTO_UPDATE = "auto_update_check"
@@ -63,6 +71,7 @@ class AppSettings(context: Context) {
         const val KEY_CLOUD_SYNC = "cloud_sync_enabled"
         const val KEY_DISPLAY_NAME = "display_name"
         const val KEY_SYNC_BASE = "sync_base_url"
+        const val KEY_PAIRED = "paired"
         const val UPDATE_INTERVAL_MS = 24L * 60 * 60 * 1000
     }
 }
