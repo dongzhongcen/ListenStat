@@ -1,0 +1,111 @@
+{
+  "profile": {
+    "displayName": "听时用户",
+    "deviceId": "ls-desk-demo-001",
+    "syncEnabled": false,
+    "pairCode": "",
+    "trayEnabled": true,
+    "autostart": false
+  },
+  "kpis": {
+    "todaySec": 7380,
+    "weekSec": 41220,
+    "monthSec": 158400,
+    "streakDays": 12
+  },
+  "nowPlaying": {
+    "app": "网易云音乐",
+    "title": "起风了",
+    "artist": "买辣椒也用券",
+    "elapsedSec": 1860,
+    "progress": 0.62
+  },
+  "recent": [
+    { "app": "网易云音乐", "title": "起风了", "durationSec": 1860, "progress": 0.85, "device": "电脑" },
+    { "app": "喜马拉雅", "title": "三体 · 第12集", "durationSec": 3240, "progress": 0.72, "device": "手机" },
+    { "app": "Spotify", "title": "Blinding Lights", "durationSec": 1980, "progress": 0.55, "device": "电脑" },
+    { "app": "Edge", "title": "TED Talk: How habits work", "durationSec": 2640, "progress": 0.48, "device": "电脑" },
+    { "app": "哔哩哔哩", "title": "古典音乐入门指南", "durationSec": 4120, "progress": 0.91, "device": "手机" }
+  ],
+  "dailyListening": [
+    { "day": "一", "sec": 5400 },
+    { "day": "二", "sec": 7200 },
+    { "day": "三", "sec": 4800 },
+    { "day": "四", "sec": 9600 },
+    { "day": "五", "sec": 8100 },
+    { "day": "六", "sec": 11200 },
+    { "day": "日", "sec": 7380 }
+  ],
+  "sourceFunnel": [
+    { "name": "网易云音乐", "pct": 0.83, "sec": 52800 },
+    { "name": "喜马拉雅", "pct": 0.62, "sec": 39600 },
+    { "name": "Spotify", "pct": 0.38, "sec": 24200 },
+    { "name": "Edge", "pct": 0.23, "sec": 14600 }
+  ],
+  "ranking": [
+    { "app": "网易云音乐", "package": "com.netease.cloudmusic", "durationSec": 52800, "progress": 1.0, "device": "电脑", "sessions": 86 },
+    { "app": "喜马拉雅", "package": "com.ximalaya.ting.android", "durationSec": 39600, "progress": 0.75, "device": "手机", "sessions": 42 },
+    { "app": "Spotify", "package": "com.spotify.music", "durationSec": 24200, "progress": 0.46, "device": "电脑", "sessions": 31 },
+    { "app": "哔哩哔哩", "package": "tv.danmaku.bili", "durationSec": 19800, "progress": 0.38, "device": "手机", "sessions": 18 },
+    { "app": "Edge", "package": "com.microsoft.edge", "durationSec": 14600, "progress": 0.28, "device": "电脑", "sessions": 24 },
+    { "app": "QQ音乐", "package": "com.tencent.qqmusic", "durationSec": 9800, "progress": 0.19, "device": "手机", "sessions": 15 },
+    { "app": "YouTube Music", "package": "com.google.android.apps.youtube.music", "durationSec": 7200, "progress": 0.14, "device": "电脑", "sessions": 9 },
+    { "app": "Podcast Addict", "package": "com.bambuna.podcastaddict", "durationSec": 5400, "progress": 0.1, "device": "手机", "sessions": 7 }
+  ],
+  "appDetails": {
+    "网易云音乐": {
+      "titles": [
+        { "title": "起风了", "artist": "买辣椒也用券", "durationSec": 8640, "progress": 1.0 },
+        { "title": "消愁", "artist": "毛不易", "durationSec": 6120, "progress": 0.71 },
+        { "title": "光年之外", "artist": "G.E.M.邓紫棋", "durationSec": 4980, "progress": 0.58 },
+        { "title": "海阔天空", "artist": "Beyond", "durationSec": 4320, "progress": 0.5 },
+        { "title": "平凡之路", "artist": "朴树", "durationSec": 3960, "progress": 0.46 },
+        { "title": "晴天", "artist": "周杰伦", "durationSec": 3540, "progress": 0.41 },
+        { "title": "演员", "artist": "薛之谦", "durationSec": 2880, "progress": 0.33 },
+        { "title": "成都", "artist": "赵雷", "durationSec": 2640, "progress": 0.31 }
+      ]
+    },
+    "喜马拉雅": {
+      "titles": [
+        { "title": "三体 · 全集", "artist": "刘慈欣", "durationSec": 18600, "progress": 1.0 },
+        { "title": "明朝那些事儿", "artist": "当年明月", "durationSec": 12400, "progress": 0.67 },
+        { "title": "人类简史", "artist": "尤瓦尔·赫拉利", "durationSec": 8600, "progress": 0.46 }
+      ]
+    },
+    "Spotify": {
+      "titles": [
+        { "title": "Blinding Lights", "artist": "The Weeknd", "durationSec": 7200, "progress": 1.0 },
+        { "title": "As It Was", "artist": "Harry Styles", "durationSec": 5400, "progress": 0.75 },
+        { "title": "Levitating", "artist": "Dua Lipa", "durationSec": 4800, "progress": 0.67 }
+      ]
+    },
+    "Edge": {
+      "titles": [
+        { "title": "TED Talk: How habits work", "artist": "Edge", "durationSec": 5400, "progress": 1.0 },
+        { "title": "Lo-fi hip hop radio", "artist": "Edge", "durationSec": 4800, "progress": 0.89 },
+        { "title": "BBC World Service", "artist": "Edge", "durationSec": 4400, "progress": 0.81 }
+      ]
+    },
+    "哔哩哔哩": {
+      "titles": [
+        { "title": "古典音乐入门指南", "artist": "哔哩哔哩", "durationSec": 9800, "progress": 1.0 },
+        { "title": "爵士夜听歌单", "artist": "哔哩哔哩", "durationSec": 6200, "progress": 0.63 },
+        { "title": "白噪音 · 雨声", "artist": "哔哩哔哩", "durationSec": 3800, "progress": 0.39 }
+      ]
+    }
+  },
+  "achievements": [
+    { "id": "first_hour", "name": "初听一小时", "desc": "累计收听满 1 小时", "unlocked": true, "icon": "clock" },
+    { "id": "streak_3", "name": "三日连听", "desc": "连续 3 天有收听记录", "unlocked": true, "icon": "flame" },
+    { "id": "streak_7", "name": "一周坚持", "desc": "连续 7 天有收听记录", "unlocked": true, "icon": "flame" },
+    { "id": "streak_30", "name": "月度达人", "desc": "连续 30 天有收听记录", "unlocked": false, "icon": "trophy" },
+    { "id": "apps_5", "name": "五源并进", "desc": "在 5 个不同应用中有收听", "unlocked": true, "icon": "apps" },
+    { "id": "apps_10", "name": "十源合奏", "desc": "在 10 个不同应用中有收听", "unlocked": false, "icon": "apps" },
+    { "id": "day_4h", "name": "沉浸半日", "desc": "单日收听满 4 小时", "unlocked": true, "icon": "headphones" },
+    { "id": "day_8h", "name": "全天沉浸", "desc": "单日收听满 8 小时", "unlocked": false, "icon": "headphones" },
+    { "id": "night_owl", "name": "夜猫子", "desc": "凌晨 0–5 点累计满 2 小时", "unlocked": true, "icon": "moon" },
+    { "id": "early_bird", "name": "早起鸟", "desc": "清晨 5–8 点累计满 2 小时", "unlocked": false, "icon": "sun" },
+    { "id": "cross_device", "name": "双端同步", "desc": "手机与电脑均有收听记录", "unlocked": true, "icon": "devices" },
+    { "id": "hundred_hours", "name": "百小时勋章", "desc": "累计收听满 100 小时", "unlocked": false, "icon": "medal" }
+  ]
+}
