@@ -300,6 +300,7 @@ class MainActivity : AppCompatActivity() {
             val outcome = withContext(Dispatchers.IO) { syncManager.enableAndSync() }
             when (outcome) {
                 is SyncManager.Outcome.Ok -> {
+                    settingsPage.refresh()
                     settingsPage.setSyncStatus(getString(R.string.sync_ok_fmt, outcome.detail))
                     snack(getString(R.string.sync_ok_fmt, outcome.detail))
                     statsPage.reload()
@@ -322,6 +323,57 @@ class MainActivity : AppCompatActivity() {
                 is SyncManager.Outcome.Ok -> snack(getString(R.string.sync_name_saved))
                 is SyncManager.Outcome.Err -> snack(getString(R.string.sync_failed_fmt, outcome.message))
                 SyncManager.Outcome.Skipped -> Unit
+            }
+        }
+    }
+
+    fun onPairCreate() {
+        if (!settings.cloudSyncEnabled) {
+            settingsPage.showPairMessage(getString(R.string.pair_need_sync))
+            return
+        }
+        settingsPage.setPairBusy(getString(R.string.pair_creating))
+        lifecycleScope.launch {
+            val outcome = withContext(Dispatchers.IO) { syncManager.createPairCode() }
+            when (outcome) {
+                is SyncManager.PairCreateOutcome.Ok -> {
+                    settingsPage.showPairCode(outcome.code, outcome.expiresAt)
+                    snack(getString(R.string.pair_help))
+                }
+                is SyncManager.PairCreateOutcome.Err -> {
+                    settingsPage.showPairMessage(getString(R.string.pair_create_failed_fmt, outcome.message))
+                    snack(getString(R.string.pair_create_failed_fmt, outcome.message))
+                }
+                SyncManager.PairCreateOutcome.Skipped -> {
+                    settingsPage.showPairMessage(getString(R.string.pair_need_sync))
+                }
+            }
+        }
+    }
+
+    fun onPairClaim(code: String) {
+        if (!settings.cloudSyncEnabled) {
+            settingsPage.showPairMessage(getString(R.string.pair_need_sync))
+            return
+        }
+        settingsPage.setPairBusy(getString(R.string.pair_claiming))
+        lifecycleScope.launch {
+            val outcome = withContext(Dispatchers.IO) { syncManager.claimPairCode(code) }
+            when (outcome) {
+                is SyncManager.PairClaimOutcome.Ok -> {
+                    settingsPage.onPairClaimSuccess()
+                    settingsPage.showPairMessage(getString(R.string.pair_claim_ok_fmt, outcome.detail))
+                    settingsPage.refresh()
+                    snack(getString(R.string.pair_claim_ok_fmt, outcome.detail))
+                    statsPage.reload()
+                }
+                is SyncManager.PairClaimOutcome.Err -> {
+                    settingsPage.showPairMessage(getString(R.string.pair_claim_failed_fmt, outcome.message))
+                    snack(getString(R.string.pair_claim_failed_fmt, outcome.message))
+                }
+                SyncManager.PairClaimOutcome.Skipped -> {
+                    settingsPage.showPairMessage(getString(R.string.pair_need_sync))
+                }
             }
         }
     }

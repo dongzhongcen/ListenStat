@@ -100,6 +100,22 @@
     <string name="sync_ok_fmt">同步完成：%1$s</string>
     <string name="sync_failed_fmt">同步失败：%1$s</string>
     <string name="sync_name_saved">显示名称已更新</string>
+    <string name="pair_help">在另一台设备输入此码，可将手机与电脑合并到同一账号</string>
+    <string name="pair_generate">生成配对码</string>
+    <string name="pair_copy">复制</string>
+    <string name="pair_code_copied">配对码已复制</string>
+    <string name="pair_expires_fmt">有效期至 %1$s</string>
+    <string name="pair_claim_hint">输入配对码</string>
+    <string name="pair_claim">输入配对码加入</string>
+    <string name="pair_creating">正在生成配对码…</string>
+    <string name="pair_claiming">正在加入…</string>
+    <string name="pair_need_sync">请先开启云端同步后再配对</string>
+    <string name="pair_create_failed_fmt">生成失败：%1$s</string>
+    <string name="pair_claim_ok_fmt">配对成功：%1$s</string>
+    <string name="pair_claim_failed_fmt">配对失败：%1$s</string>
+    <string name="pair_state_yes">已与其他设备配对</string>
+    <string name="pair_state_no">尚未配对</string>
+    <string name="pair_code_label_fmt">配对码：%1$s</string>
 
     <string name="backup_title">备份与恢复</string>
     <string name="backup_body">导出 JSON；导入时自动合并去重。</string>
