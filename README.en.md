@@ -4,7 +4,7 @@
 
 **Android / Windows media play-time tracker (听时)**
 
-*Day / month / year · app & title Top 20 · achievements · local by default · optional cloud sync · phone ↔ PC pairing*
+*Day / month / year · listening calendar · local listening reminders · app & title Top 20 · achievements · local by default · optional cloud sync · phone ↔ PC pairing*
 
 [简体中文](README.md) | **English**
 
@@ -14,6 +14,8 @@
 </div>
 
 ## Status
+
+**v0.3 (this branch)** — adds a **listening calendar** and **local listening reminders (alarms)**. Bottom nav has five pages: Stats · Calendar · Alarm · Achievements · Settings. Alarms stay on-device only (SharedPreferences + AlarmManager) and fire system notifications when due; the app does **not** read or write system calendar accounts and does **not** use `READ_CALENDAR` / `WRITE_CALENDAR`. Built on v0.2.3.
 
 **v0.2.3** — optional cloud sync (off by default in Settings). When enabled, registers with a stable device id against a self-hosted sync API and push/pulls day listening aggregates (package, title, day, duration). Wallpaper images are never uploaded. With sync off, behaviour matches the local-only app. Built on v0.2.2.
 
@@ -35,6 +37,8 @@ ListenStat reads system media sessions from **any** app that publishes one (musi
 - "Now listening" card with the current segment and today's total; in-progress time is added to stats only when the selected period includes now
 - **Achievements** (local only): first listen, 1 / 10 / 100 / 500 hours total, 3 / 7 / 30-day streaks, 3 hours in one day, night owl (listening 0–5 am), 50 different titles… computed from local data when the app is opened or resumed, with a subtle notice when one unlocks
 - **Wallpaper background**: pick an image with the system photo picker, adjust blur and veil; cards turn semi-transparent; removable any time
+- **Listening calendar**: month grid with markers on days that have listening; tap a day for that day's total and session list (from on-device Room — not the system calendar)
+- **Local listening reminders (alarms)**: set a fixed time and repeat (daily / weekdays / weekend / custom weekdays); when due, a system notification reminds you to listen. Stored on-device only — **not** cloud-synced and **not** written to the system calendar
 - **Backup / restore**: export to a JSON file; import merges without duplicates
 - **Update check**: on app open (at most once a day) or manually, against GitHub Releases; can be turned off in Settings (independent of cloud sync)
 - **Cloud sync (optional, off by default)**: when enabled in Settings, registers the device and syncs day listening aggregates; with the toggle off, no sync network traffic. Wallpaper is never uploaded
@@ -45,16 +49,21 @@ ListenStat reads system media sessions from **any** app that publishes one (musi
 | --- | --- |
 | Notification Listener access | read system media sessions (required for tracking) |
 | `INTERNET` | (1) optional GitHub Releases update check; (2) optional cloud sync API when the user turns sync on |
+| `POST_NOTIFICATIONS` | post a system notification when a listening reminder fires (runtime grant on Android 13+); **not** a persistent foreground-service notification for tracking |
+| `SCHEDULE_EXACT_ALARM` | schedule exact local listening reminders via AlarmManager (without it, reminders may be slightly delayed) |
+| `RECEIVE_BOOT_COMPLETED` | re-register local reminders after reboot so they are not lost |
+| `VIBRATE` | vibration for reminder notifications |
 
 - By default all records stay in the on-device Room database (package name, title, artist, timestamps)
+- **Listening reminders (alarms) are stored on-device only** (SharedPreferences). They are **not** uploaded with cloud sync and are **not** written to or read from system calendar accounts; the app does **not** request `READ_CALENDAR` / `WRITE_CALENDAR`
 - **Cloud sync is off by default.** With it off, nothing is uploaded and no sync endpoints are called
-- When sync is on, the app uploads a stable device id, an optional display name, and day aggregates (`package` / `title` / `day` / `duration_ms`). **Wallpaper images are never uploaded.** No ads or third-party analytics SDK
+- When sync is on, the app uploads a stable device id, an optional display name, and day aggregates (`package` / `title` / `day` / `duration_ms`). **Wallpaper images are never uploaded.** **Alarms are never uploaded.** No ads or third-party analytics SDK
 - Phone and Windows can be merged into one account with a **pairing code** (both sides need sync on); unpaired devices stay separate accounts
 - Update check is independent of sync and only reads public release metadata
 - The sync device token is stored in EncryptedSharedPreferences (or equivalent private storage) and is never written to logs
 - Wallpaper comes from the system photo picker and is copied into app-private storage; backups are read/written via the system file picker — **no storage or media permission**
-- No notification permission, no foreground service, no persistent notification
-- Uninstalling the app removes all data
+- **Media tracking**: no foreground service and no persistent notification for tracking. **Listening reminders**: fire a one-shot system notification when due (swipe to dismiss) — not a foreground-service ongoing notification
+- Uninstalling the app removes all data (including local alarms)
 
 ### Cloud sync notes
 
@@ -100,8 +109,8 @@ Artifacts land in `desktop/release/` (NSIS installer and portable). See [`deskto
 - **Event-driven**: records only on play / pause / track or chapter change / session gone — no 15 s polling, no timed wakeups
 - While playing, only the start time is kept in memory; one database write when the segment ends; segments under 3 s are ignored
 - If the process is killed, the next start finalizes the last segment using the system-recorded exit time (no invented time)
-- **No foreground service, no persistent notification, no wake lock**; the UI timer ticks only while the screen is visible and something is playing
-- Achievements are computed only when the app is opened/resumed (no background work); by default the only network use is the daily-at-most version check (can be disabled); cloud sync must be turned on separately
+- **Media tracking uses no foreground service, no persistent notification, and no wake lock**; the UI timer ticks only while the screen is visible and something is playing. Listening reminders only post a one-shot notification when due — they do not keep a foreground service alive
+- Achievements are computed only when the app is opened/resumed (no background work); by default the only network use is the daily-at-most version check (can be disabled); cloud sync must be turned on separately; local alarms are scheduled with AlarmManager and re-registered by `BootReceiver` after reboot
 - Tip: only if the system keeps killing ListenStat and stats get interrupted, set it to "unrestricted" in battery optimization
 
 ## Build

@@ -29,6 +29,16 @@
         layout="@layout/page_stats" />
 
     <include
+        android:id="@+id/pageCalendar"
+        layout="@layout/page_calendar"
+        android:visibility="gone" />
+
+    <include
+        android:id="@+id/pageAlarm"
+        layout="@layout/page_alarm"
+        android:visibility="gone" />
+
+    <include
         android:id="@+id/pageAchievements"
         layout="@layout/page_achievements"
         android:visibility="gone" />
@@ -59,6 +69,20 @@
             style="@style/LS.CircleButton"
             android:contentDescription="@string/nav_stats"
             android:src="@drawable/ic_chart" />
+
+        <ImageButton
+            android:id="@+id/navCalendar"
+            style="@style/LS.CircleButton"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/nav_calendar"
+            android:src="@drawable/ic_calendar" />
+
+        <ImageButton
+            android:id="@+id/navAlarm"
+            style="@style/LS.CircleButton"
+            android:layout_marginStart="8dp"
+            android:contentDescription="@string/nav_alarm"
+            android:src="@drawable/ic_alarm" />
 
         <ImageButton
             android:id="@+id/navAchievements"

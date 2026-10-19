@@ -7,6 +7,11 @@
       Nothing is uploaded unless sync is enabled.
     -->
     <uses-permission android:name="android.permission.INTERNET" />
+    <!-- Local listening reminders (AlarmManager); not system calendar sync. -->
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+    <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
         android:allowBackup="true"
@@ -34,5 +39,21 @@
                 <action android:name="android.service.notification.NotificationListenerService" />
             </intent-filter>
         </service>
+
+        <receiver
+            android:name=".alarm.AlarmReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="com.dongzhongcen.listenstat.ALARM_FIRE" />
+            </intent-filter>
+        </receiver>
+
+        <receiver
+            android:name=".alarm.BootReceiver"
+            android:exported="true">
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

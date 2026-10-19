@@ -10,6 +10,8 @@
     <string name="greeting_evening">晚上好</string>
     <string name="greeting_night">夜深了</string>
     <string name="nav_stats">统计</string>
+    <string name="nav_calendar">日历</string>
+    <string name="nav_alarm">闹钟</string>
     <string name="nav_achievements">成就</string>
     <string name="nav_settings">设置</string>
     <string name="menu">菜单</string>
@@ -149,4 +151,47 @@
     <string name="section_app_titles">本应用标题 Top 20</string>
     <string name="app_detail_empty_title">这段时间没有收听</string>
     <string name="app_detail_empty_body">换一天或换个周期试试，或者用这个应用播放一会儿再回来。</string>
+
+    <string name="calendar_title">收听\n日历</string>
+    <string name="calendar_hand">by day ♪</string>
+    <string name="calendar_pick_day">点选一天查看详情</string>
+    <string name="calendar_day_fmt">%1$s 共听</string>
+    <string name="calendar_day_empty">这一天还没有收听记录</string>
+    <string name="calendar_segment_fmt">%1$s · %2$s</string>
+    <string name="calendar_weekday_mon">一</string>
+    <string name="calendar_weekday_tue">二</string>
+    <string name="calendar_weekday_wed">三</string>
+    <string name="calendar_weekday_thu">四</string>
+    <string name="calendar_weekday_fri">五</string>
+    <string name="calendar_weekday_sat">六</string>
+    <string name="calendar_weekday_sun">日</string>
+
+    <string name="alarm_title">听书\n提醒</string>
+    <string name="alarm_hand">local only</string>
+    <string name="alarm_add">添加提醒</string>
+    <string name="alarm_empty">还没有提醒。点右上角添加一个固定时间的本地听书提醒。</string>
+    <string name="alarm_sheet_add">添加提醒</string>
+    <string name="alarm_sheet_edit">编辑提醒</string>
+    <string name="alarm_label_hint">备注（可选）</string>
+    <string name="alarm_repeat">重复</string>
+    <string name="alarm_save">保存</string>
+    <string name="alarm_delete">删除</string>
+    <string name="alarm_everyday">每天</string>
+    <string name="alarm_weekdays">工作日</string>
+    <string name="alarm_weekend">周末</string>
+    <string name="alarm_notif_title">听书提醒</string>
+    <string name="alarm_notif_default">该听听书了</string>
+    <string name="alarm_notif_channel">听书提醒</string>
+    <string name="alarm_notif_channel_desc">本地定时提醒，不会同步到系统日历</string>
+    <string name="alarm_exact_hint">精确闹钟权限未开启时，提醒可能略有延迟。可在系统设置中允许 ListenStat 使用精确闹钟。</string>
+    <string name="alarm_exact_open">去开启精确闹钟</string>
+    <string name="alarm_saved">提醒已保存</string>
+    <string name="alarm_deleted">提醒已删除</string>
+    <string name="alarm_day_mon">一</string>
+    <string name="alarm_day_tue">二</string>
+    <string name="alarm_day_wed">三</string>
+    <string name="alarm_day_thu">四</string>
+    <string name="alarm_day_fri">五</string>
+    <string name="alarm_day_sat">六</string>
+    <string name="alarm_day_sun">日</string>
 </resources>
