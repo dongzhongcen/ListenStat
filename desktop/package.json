@@ -1,7 +1,7 @@
 {
   "name": "listenstat-desktop",
   "productName": "ListenStat",
-  "version": "0.1.0",
+  "version": "0.2.5",
   "description": "ListenStat（听时）桌面端 — 按应用统计收听时长",
   "main": "electron/main.js",
   "type": "module",
@@ -54,7 +54,8 @@
           ]
         }
       ],
-      "artifactName": "ListenStat-${version}-${os}-${arch}.${ext}"
+      "artifactName": "ListenStat-${version}-${os}-${arch}.${ext}",
+      "signAndEditExecutable": false
     },
     "nsis": {
       "oneClick": false,

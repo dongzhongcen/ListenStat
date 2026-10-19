@@ -1,5 +1,3 @@
-import mock from './data/mock.json';
-
 const state = {
   view: 'overview',
   period: 'day',
@@ -31,8 +29,29 @@ const ICONS = {
   chevronR: `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"><path d="m9 18 6-6-6-6"/></svg>`,
 };
 
+function emptyDashboard() {
+  return {
+    profile: {
+      displayName: '',
+      deviceId: '',
+      syncEnabled: false,
+      trayEnabled: true,
+      autostart: false,
+      paired: false,
+    },
+    kpis: { todaySec: 0, weekSec: 0, monthSec: 0, streakDays: 0 },
+    nowPlaying: { state: 'idle' },
+    recent: [],
+    dailyListening: [],
+    sourceFunnel: [],
+    ranking: [],
+    achievements: [],
+    appDetails: {},
+  };
+}
+
 function data() {
-  return state.data || mock;
+  return state.data || emptyDashboard();
 }
 
 function formatDuration(sec) {
@@ -79,7 +98,7 @@ function dayLabel(offset) {
 function renderOverview() {
   const d = data();
   const { kpis, dailyListening, sourceFunnel, recent } = d;
-  const nowPlaying = Object.prototype.hasOwnProperty.call(d, "nowPlaying") ? d.nowPlaying : mock.nowPlaying;
+  const nowPlaying = Object.prototype.hasOwnProperty.call(d, "nowPlaying") ? d.nowPlaying : { state: "idle" };
   const maxBar = Math.max(...(dailyListening || []).map((x) => x.sec), 1);
   const filteredRecent = (recent || []).filter((r) => matchDevice(r) && (matchSearch(r.app) || matchSearch(r.title)));
 
@@ -246,7 +265,7 @@ function renderDetail() {
   const ranking = data().ranking || [];
   const apps = ranking.filter((r) => matchSearch(r.app));
   const selected = state.selectedApp || apps[0]?.app || '';
-  const detail = (data().appDetails || {})[selected] || mock.appDetails[selected];
+  const detail = (data().appDetails || {})[selected] || { titles: [] };
   const titles = (detail?.titles || []).filter((t) => matchSearch(t.title) || matchSearch(t.artist));
   const scale = state.dayOffset === 0 ? 1 : Math.max(0.35, 1 + state.dayOffset * 0.08);
 
@@ -301,7 +320,7 @@ function renderDetail() {
 }
 
 function renderAchievements() {
-  const list = data().achievements || mock.achievements;
+  const list = data().achievements || [];
   const unlocked = list.filter((a) => a.unlocked).length;
   return `
     <div class="ach-header">
@@ -326,7 +345,7 @@ function renderAchievements() {
 }
 
 function renderSettings() {
-  const p = data().profile || mock.profile;
+  const p = data().profile || emptyDashboard().profile;
   const pairedLabel = p.paired ? '已与其他设备配对' : '尚未配对';
   return `
     <div class="settings-wrap">
@@ -405,8 +424,16 @@ function renderSettings() {
         </div>
       </div>
       <div class="settings-section">
+        <h3>本地数据</h3>
+        <p class="settings-note" style="margin-top:0;margin-bottom:12px">
+          早期版本会写入演示曲目（如「起风了」）。可一键清空本机记录；不会删除云端账号。
+        </p>
+        <button type="button" class="btn-primary" id="btn-clear-local">清空本机听时记录</button>
+        <p class="settings-note" id="clear-local-msg"></p>
+      </div>
+      <div class="settings-section">
         <h3>关于</h3>
-        <p class="settings-note">ListenStat（听时）桌面端 v0.1.0<br/>在 Windows 上通过系统媒体控件统计收听时长；云端同步可选。</p>
+        <p class="settings-note">ListenStat（听时）桌面端 v0.2.5<br/>在 Windows 上通过系统媒体控件统计收听时长；云端同步可选。</p>
       </div>
     </div>
   `;
@@ -542,6 +569,23 @@ function bindViewEvents() {
       }
     });
   }
+
+  document.getElementById('btn-clear-local')?.addEventListener('click', async () => {
+    if (!api?.clearLocalRecords) return;
+    if (!confirm('确定清空本机全部听时记录？此操作不可撤销。')) return;
+    state.busy = true;
+    const msg = document.getElementById('clear-local-msg');
+    try {
+      await api.clearLocalRecords();
+      state.data = await api.getData();
+      if (msg) msg.textContent = '已清空本机记录';
+      render();
+    } catch (e) {
+      if (msg) msg.textContent = '清空失败：' + (e.message || e);
+    } finally {
+      state.busy = false;
+    }
+  });
 }
 
 function syncNav() {
@@ -580,11 +624,11 @@ async function loadInitial() {
         state.selectedApp = state.data.ranking[0].app;
       }
     } catch {
-      state.data = mock;
+      state.data = emptyDashboard();
     }
   } else {
-    state.data = mock;
-    state.selectedApp = mock.ranking[0]?.app;
+    state.data = emptyDashboard();
+    state.selectedApp = null;
   }
   if (api?.onData) {
     api.onData((d) => {

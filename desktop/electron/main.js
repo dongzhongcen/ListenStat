@@ -17,10 +17,8 @@ import {
   upsertRemoteRecords,
   recordsForPush,
   computeStats,
-  ensureDemoIfEmpty,
+  clearAllRecords,
   listRecords,
-  todayLocal,
-  recordId,
 } from './store.js';
 import { syncClient } from './syncClient.js';
 
@@ -31,6 +29,8 @@ let mainWindow = null;
 let tray = null;
 let stopMedia = null;
 let syncTimer = null;
+let isQuitting = false;
+let trayOk = false;
 
 async function loadMediaModule() {
   if (process.platform === 'win32') {
@@ -63,7 +63,9 @@ function createWindow() {
 
   mainWindow.on('close', (e) => {
     const creds = loadCredentials();
-    if (creds.trayEnabled && tray && process.platform === 'win32') {
+    // Only minimize-to-tray when a visible tray was created; otherwise closing would
+    // leave a zombie process with no UI to quit from.
+    if (!isQuitting && creds.trayEnabled && trayOk && tray && process.platform === 'win32') {
       e.preventDefault();
       mainWindow.hide();
     }
@@ -75,17 +77,25 @@ function createWindow() {
 }
 
 function trayIcon() {
-  // Simple 16x16 PNG (blue square) as data URL
-  const png = Buffer.from(
-    'iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAMUlEQVQ4T2NkYGD4z0ABYBzVMKoBBgAGhgEGBgYGBgYGBgYGBgYGBgYGBgYGBgYGAGkQAQ8A8Y0iAAAAAElFTkSuQmCC',
-    'base64'
-  );
-  return nativeImage.createFromBuffer(png);
+  const file = path.join(__dirname, 'tray-icon.png');
+  let img = nativeImage.createFromPath(file);
+  if (img.isEmpty()) {
+    // Opaque 32×32 blue circle fallback (embedded) if the file is missing from asar.
+    const png = Buffer.from(
+      'iVBORw0KGgoAAAANSUhEUgAAACAAAAAgCAYAAABzenr0AAAAYElEQVR42u3XwQ0AIAwCwC7jZI7vELqBWtsGTCDxzb0UzZTf0vqYuwMrLoN4i1Mh0fIQIqv8CZFd7kZAAVXl1wgooLr8iBBAAAHgAN2Eeg1pBgnFJKMYpRSznOZjolRlAYYnKMRiSQFGAAAAAElFTkSuQmCC',
+      'base64'
+    );
+    img = nativeImage.createFromBuffer(png);
+  }
+  return img.resize({ width: 16, height: 16 });
 }
 
 function createTray() {
   try {
-    if (tray) return;
+    if (tray) {
+      trayOk = true;
+      return;
+    }
     tray = new Tray(trayIcon());
     tray.setToolTip('ListenStat 听时');
     rebuildTrayMenu();
@@ -93,7 +103,10 @@ function createTray() {
       mainWindow?.show();
       mainWindow?.focus();
     });
+    trayOk = !tray.isDestroyed();
   } catch (e) {
+    trayOk = false;
+    tray = null;
     console.warn('[tray] unavailable:', e.message);
   }
 }
@@ -118,11 +131,13 @@ function rebuildTrayMenu() {
       {
         label: '退出',
         click: () => {
+          isQuitting = true;
           if (tray) {
             tray.destroy();
             tray = null;
           }
-          app.exit(0);
+          trayOk = false;
+          app.quit();
         },
       },
     ])
@@ -141,46 +156,6 @@ function applyAutostart(enabled) {
   }
 }
 
-function seedDemoData() {
-  const today = todayLocal();
-  const demos = [
-    { pkg: 'com.netease.cloudmusic', app: '网易云音乐', title: '起风了', ms: 1860_000 },
-    { pkg: 'com.ximalaya.ting.android', app: '喜马拉雅', title: '三体 · 第12集', ms: 3240_000 },
-    { pkg: 'com.spotify.music', app: 'Spotify', title: 'Blinding Lights', ms: 1980_000 },
-    { pkg: 'com.microsoft.edge', app: 'Edge', title: 'TED Talk: How habits work', ms: 2640_000 },
-    { pkg: 'tv.danmaku.bili', app: '哔哩哔哩', title: '古典音乐入门指南', ms: 4120_000 },
-    { pkg: 'com.netease.cloudmusic', app: '网易云音乐', title: '消愁', ms: 2400_000 },
-    { pkg: 'com.tencent.qqmusic', app: 'QQ音乐', title: '晴天', ms: 1500_000 },
-  ];
-  const records = demos.map((d) => ({
-    record_id: recordId(d.pkg, d.title, today),
-    package: d.pkg,
-    appName: d.app,
-    title: d.title,
-    day: today,
-    duration_ms: d.ms,
-    source: d.app.includes('喜马') || d.app.includes('哔哩') || d.app.includes('QQ') ? 'phone' : 'desktop',
-    updated_at: new Date().toISOString(),
-  }));
-  // Also seed a few past days for chart
-  for (let i = 1; i <= 6; i++) {
-    const d = new Date();
-    d.setDate(d.getDate() - i);
-    const day = d.toISOString().slice(0, 10);
-    const item = demos[i % demos.length];
-    records.push({
-      record_id: recordId(item.pkg, item.title + '-' + i, day),
-      package: item.pkg,
-      appName: item.app,
-      title: item.title,
-      day,
-      duration_ms: 1800_000 + i * 400_000,
-      source: 'desktop',
-      updated_at: new Date().toISOString(),
-    });
-  }
-  ensureDemoIfEmpty(records);
-}
 
 function getDashboardPayload() {
   const creds = loadCredentials();
@@ -364,53 +339,90 @@ function registerIpc() {
   ipcMain.handle('listenstat:openExternal', async (_e, url) => {
     if (typeof url === 'string' && url.startsWith('https://')) shell.openExternal(url);
   });
+
+  ipcMain.handle('listenstat:clearLocalRecords', async () => {
+    clearAllRecords();
+    globalThis.__nowPlaying = { state: 'idle' };
+    notifyRenderer();
+    return { ok: true };
+  });
 }
 
 async function startMediaTracking() {
   const media = await loadMediaModule();
   stopMedia = media.startMediaWatcher((session, elapsedMs) => {
-    globalThis.__nowPlaying = {
-      state: session.state,
-      app: session.appName || session.appPackage || '未知应用',
-      title: session.title || '正在播放',
-      artist: session.artist || '',
-      elapsedSec: Math.round((session.positionMs || 0) / 1000),
-      progress: session.durationMs
-        ? Math.min(1, (session.positionMs || 0) / session.durationMs)
-        : 0.5,
-    };
-    if (elapsedMs > 0 && session.state === 'playing') {
-      addListeningMs({
-        packageName: session.appPackage || session.appName || 'unknown',
-        appName: session.appName || session.appPackage || '未知应用',
-        title: session.title || session.appName || '未知标题',
-        durationMs: elapsedMs,
-        source: 'desktop',
-      });
-      notifyRenderer();
+    if (session.state === 'playing') {
+      globalThis.__nowPlaying = {
+        state: 'playing',
+        app: session.appName || session.appPackage || '未知应用',
+        title: session.title || '正在播放',
+        artist: session.artist || '',
+        elapsedSec: Math.round((session.positionMs || 0) / 1000),
+        progress: session.durationMs
+          ? Math.min(1, (session.positionMs || 0) / session.durationMs)
+          : 0.5,
+      };
+      if (elapsedMs > 0) {
+        addListeningMs({
+          packageName: session.appPackage || session.appName || 'unknown',
+          appName: session.appName || session.appPackage || '未知应用',
+          title: session.title || session.appName || '未知标题',
+          durationMs: elapsedMs,
+          source: 'desktop',
+        });
+      }
+    } else {
+      globalThis.__nowPlaying = { state: 'idle' };
     }
+    notifyRenderer();
   }, 5000);
 
   // Initial poll
   const cur = await media.getCurrentMediaSession();
-  if (cur.state !== 'idle') {
+  if (cur.state === 'playing') {
     globalThis.__nowPlaying = {
-      state: cur.state,
+      state: 'playing',
       app: cur.appName || cur.appPackage || '未知应用',
       title: cur.title || '正在播放',
       artist: cur.artist || '',
       elapsedSec: Math.round((cur.positionMs || 0) / 1000),
       progress: 0.5,
     };
+  } else {
+    globalThis.__nowPlaying = { state: 'idle' };
   }
 }
 
 app.whenReady().then(async () => {
-  seedDemoData();
   registerIpc();
   createWindow();
   const creds = loadCredentials();
   if (creds.trayEnabled) createTray();
+  // Application menu: always offer Quit even if tray icon is hidden by Windows.
+  Menu.setApplicationMenu(
+    Menu.buildFromTemplate([
+      {
+        label: 'ListenStat',
+        submenu: [
+          {
+            label: '显示主窗口',
+            click: () => {
+              mainWindow?.show();
+              mainWindow?.focus();
+            },
+          },
+          {
+            label: '退出',
+            accelerator: process.platform === 'darwin' ? 'Cmd+Q' : 'Alt+F4',
+            click: () => {
+              isQuitting = true;
+              app.quit();
+            },
+          },
+        ],
+      },
+    ])
+  );
   applyAutostart(creds.autostart);
   await startMediaTracking();
   syncTimer = setInterval(() => {
@@ -426,11 +438,17 @@ app.whenReady().then(async () => {
 app.on('window-all-closed', () => {
   if (process.platform !== 'darwin') {
     const creds = loadCredentials();
-    if (!creds.trayEnabled) app.quit();
+    if (!creds.trayEnabled || !trayOk) app.quit();
   }
 });
 
 app.on('before-quit', () => {
+  isQuitting = true;
   if (stopMedia) stopMedia();
   if (syncTimer) clearInterval(syncTimer);
+  if (tray) {
+    tray.destroy();
+    tray = null;
+  }
+  trayOk = false;
 });

@@ -272,13 +272,9 @@ export function computeStats(records = listRecords()) {
   };
 }
 
-/** Seed demo mock if store empty (first launch UX). */
-export function ensureDemoIfEmpty(mockRecords) {
+/** Wipe all local listening records (settings → 清空本机). Does not touch cloud account. */
+export function clearAllRecords() {
   const store = loadStore();
-  if (Object.keys(store.records).length > 0) return false;
-  for (const r of mockRecords || []) {
-    store.records[r.record_id] = r;
-  }
+  store.records = {};
   saveStore(store);
-  return true;
 }
