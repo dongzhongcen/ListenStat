@@ -51,13 +51,15 @@ class StatsPage(
     private val b: PageStatsBinding,
     private val onMenu: () -> Unit
 ) {
+    private class AppRank(val packageName: String, val label: String, val totalMs: Long)
+
     private class Stats(
         val period: Period,
         val dbTotal: Long,
         val buckets: LongArray,
         val labels: Map<Int, String>,
         val highlight: Int,
-        val apps: List<Pair<String, Long>>,
+        val apps: List<AppRank>,
         val titles: List<Pair<String, Long>>,
         val appCount: Int,
         val titleCount: Int
@@ -457,7 +459,7 @@ class StatsPage(
                 highlight = if (isNow) today.monthValue - 1 else -1
             }
         }
-        val apps = dao.topApps(prefix, 20).map { labelForApp(it.name) to it.totalMs }
+        val apps = dao.topApps(prefix, 20).map { AppRank(it.name, labelForApp(it.name), it.totalMs) }
         val titles = dao.topTitles(prefix, 20).map { it.name to it.totalMs }
         return Stats(
             p, total, buckets, labels, highlight, apps, titles,
@@ -484,11 +486,29 @@ class StatsPage(
             cardEmpty.isVisible = empty
             cardApps.isVisible = !empty
             cardTitles.isVisible = !empty
-            fillRanks(listApps, s.apps)
+            fillAppRanks(listApps, s.apps)
             fillRanks(listTitles, s.titles)
         }
         renderLive(LiveTracker.segments.value) // adds in-progress time if the period includes now
         Ui.applyGlass(b.root)
+    }
+
+    private fun fillAppRanks(container: LinearLayout, rows: List<AppRank>) {
+        container.removeAllViews()
+        val max = rows.firstOrNull()?.totalMs?.coerceAtLeast(1L) ?: 1L
+        rows.forEachIndexed { i, app ->
+            val row = ItemRankBinding.inflate(activity.layoutInflater, container, false)
+            row.rank.text = (i + 1).toString()
+            row.name.text = app.label
+            row.duration.text = Ui.formatDuration(app.totalMs)
+            row.bar.setProgressCompat((app.totalMs * 1000 / max).toInt().coerceIn(0, 1000), false)
+            row.root.isClickable = true
+            row.root.isFocusable = true
+            row.root.setOnClickListener {
+                activity.openAppDetail(app.packageName, app.label, period)
+            }
+            container.addView(row.root)
+        }
     }
 
     private fun fillRanks(container: LinearLayout, rows: List<Pair<String, Long>>) {

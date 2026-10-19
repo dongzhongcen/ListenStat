@@ -38,6 +38,11 @@
         layout="@layout/page_settings"
         android:visibility="gone" />
 
+    <include
+        android:id="@+id/pageAppDetail"
+        layout="@layout/page_app_detail"
+        android:visibility="gone" />
+
     <!-- Small floating translucent pill navigation -->
     <LinearLayout
         android:id="@+id/navPill"

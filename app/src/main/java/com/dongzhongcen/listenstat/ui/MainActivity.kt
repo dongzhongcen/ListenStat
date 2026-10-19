@@ -7,6 +7,7 @@ import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
 import android.view.View
+import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AppCompatActivity
@@ -42,6 +43,7 @@ class MainActivity : AppCompatActivity() {
     private lateinit var statsPage: StatsPage
     private lateinit var achievementsPage: AchievementsPage
     private lateinit var settingsPage: SettingsPage
+    private lateinit var appDetailPage: AppDetailPage
     private val settings by lazy { AppSettings(this) }
     private val wallpaperStore by lazy { WallpaperStore(this) }
     private var wallpaperBitmap: Bitmap? = null
@@ -77,6 +79,22 @@ class MainActivity : AppCompatActivity() {
         settingsPage = SettingsPage(this, binding.pageSettings, settings)
         statsPage.init()
         settingsPage.init()
+        appDetailPage = AppDetailPage(this, binding.pageAppDetail) {
+            binding.navPill.isVisible = true
+            restoreMainPageVisibility()
+        }
+        appDetailPage.init()
+        onBackPressedDispatcher.addCallback(this, object : OnBackPressedCallback(true) {
+            override fun handleOnBackPressed() {
+                if (appDetailPage.isOpen) {
+                    appDetailPage.close()
+                } else {
+                    isEnabled = false
+                    onBackPressedDispatcher.onBackPressed()
+                    isEnabled = true
+                }
+            }
+        })
 
         binding.navStats.setOnClickListener { showPage(Page.STATS) }
         binding.navAchievements.setOnClickListener { showPage(Page.ACHIEVEMENTS) }
@@ -115,6 +133,10 @@ class MainActivity : AppCompatActivity() {
     // ---- navigation ----
 
     private fun showPage(p: Page, animate: Boolean = true) {
+        if (::appDetailPage.isInitialized && appDetailPage.isOpen) {
+            // Close without restoring the previous tab — we are switching tabs.
+            appDetailPage.close()
+        }
         page = p
         val views = mapOf(
             Page.STATS to binding.pageStats.root,
@@ -148,7 +170,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun applyInsets() {
         val pages = listOf(
-            binding.pageStats.content, binding.pageAchievements.content, binding.pageSettings.content
+            binding.pageStats.content, binding.pageAchievements.content,
+            binding.pageSettings.content, binding.pageAppDetail.content
         )
         val base = pages.map { Triple(it.paddingTop, it.paddingBottom, it.paddingLeft) }
         val navBottom = (binding.navPill.layoutParams as android.view.ViewGroup.MarginLayoutParams).bottomMargin
@@ -311,12 +334,31 @@ class MainActivity : AppCompatActivity() {
             }
         }
         applyVeil()
-        listOf<View>(binding.pageStats.root, binding.pageAchievements.root, binding.pageSettings.root)
-            .forEach { Ui.applyGlass(it) }
+        listOf<View>(
+            binding.pageStats.root, binding.pageAchievements.root,
+            binding.pageSettings.root, binding.pageAppDetail.root
+        ).forEach { Ui.applyGlass(it) }
     }
 
     fun applyVeil() {
         binding.wallpaperVeil.alpha = settings.wallpaperDim / 100f
+    }
+
+    // ---- app ranking drill-down (local only) ----
+
+    private fun restoreMainPageVisibility() {
+        binding.pageStats.root.isVisible = page == Page.STATS
+        binding.pageAchievements.root.isVisible = page == Page.ACHIEVEMENTS
+        binding.pageSettings.root.isVisible = page == Page.SETTINGS
+        binding.pageAppDetail.root.isVisible = false
+    }
+
+    fun openAppDetail(packageName: String, appLabel: String, period: Period) {
+        binding.navPill.isVisible = false
+        binding.pageStats.root.isVisible = false
+        binding.pageAchievements.root.isVisible = false
+        binding.pageSettings.root.isVisible = false
+        appDetailPage.open(packageName, appLabel, period)
     }
 
     // ---- misc ----

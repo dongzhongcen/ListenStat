@@ -15,6 +15,8 @@
 
 ## Status
 
+**v0.2.2** — tap an app in the Top-apps ranking to open a local detail screen: period total, titles under that package, and the same day/month/year switching as the stats page. Built on v0.2.1.
+
 **v0.2.1** — track any app that publishes a system media session (music, podcasts, video, browsers that expose sessions; blank titles fall back to the app name), and shorter Settings copy. Built on v0.2.0. Test builds are on [Releases](https://github.com/dongzhongcen/ListenStat/releases) (pre-release `v0.2.1-test`).
 
 ## Overview
@@ -50,7 +52,7 @@ ListenStat reads system media sessions (same source as the control-center media 
 
 ## Upgrading
 
-- v0.2.1 / v0.2.0 are signed with **the same certificate** as v0.1.0 / v0.1.1-test, so they install over them **in place — no uninstall, all records kept**
+- v0.2.2 / v0.2.1 / v0.2.0 are signed with **the same certificate** as v0.1.0 / v0.1.1-test, so they install over them **in place — no uninstall, all records kept**
 - The database moves from version 1 to 2 with an explicit migration (adds an achievements table and a de-dup index); existing data is never dropped. Schemas are exported under `app/schemas/`
 
 ## Limits
