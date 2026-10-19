@@ -73,6 +73,37 @@ interface PlayDao {
     )
     suspend fun topTitles(prefix: String, limit: Int): List<NamedDuration>
 
+    /** Titles under one package for the selected period (Top N). */
+    @Query(
+        """
+        SELECT CASE WHEN title = '' THEN '(未知标题)' ELSE title END AS name,
+               SUM(durationMs) AS totalMs
+        FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%' AND packageName = :packageName
+        GROUP BY name
+        ORDER BY totalMs DESC
+        LIMIT :limit
+        """
+    )
+    suspend fun topTitlesForApp(prefix: String, packageName: String, limit: Int): List<NamedDuration>
+
+    @Query(
+        """
+        SELECT SUM(durationMs) FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%' AND packageName = :packageName
+        """
+    )
+    suspend fun totalMsForApp(prefix: String, packageName: String): Long?
+
+    @Query(
+        """
+        SELECT COUNT(DISTINCT CASE WHEN title = '' THEN '(未知标题)' ELSE title END)
+        FROM play_sessions
+        WHERE dayKey LIKE :prefix || '%' AND packageName = :packageName
+        """
+    )
+    suspend fun countTitlesForApp(prefix: String, packageName: String): Int
+
     @Query(
         """
         SELECT SUM(durationMs) FROM play_sessions

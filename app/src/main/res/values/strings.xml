@@ -114,4 +114,10 @@
     <string name="this_year">今年</string>
     <string name="pick_month">选择月份</string>
     <string name="pick_year">选择年份</string>
+
+    <string name="back">返回</string>
+    <string name="app_detail_caption">应用详情</string>
+    <string name="section_app_titles">本应用标题 Top 20</string>
+    <string name="app_detail_empty_title">这段时间没有收听</string>
+    <string name="app_detail_empty_body">换一天或换个周期试试，或者用这个应用播放一会儿再回来。</string>
 </resources>
