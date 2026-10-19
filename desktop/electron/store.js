@@ -272,32 +272,7 @@ export function computeStats(records = listRecords()) {
   };
 }
 
-/** First-launch demo titles used by early builds — purge once so they do not look like real data. */
-const LEGACY_DEMO_TITLES = new Set([
-  '起风了',
-  '三体 · 第12集',
-  'Blinding Lights',
-  'TED Talk: How habits work',
-  '古典音乐入门指南',
-  '消愁',
-  '晴天',
-]);
-
-export function purgeLegacyDemoRecords() {
-  const store = loadStore();
-  let removed = 0;
-  for (const [id, r] of Object.entries(store.records || {})) {
-    const title = (r && r.title) || '';
-    const base = title.replace(/-\d+$/, '');
-    if (r?.demo === true || LEGACY_DEMO_TITLES.has(title) || LEGACY_DEMO_TITLES.has(base)) {
-      delete store.records[id];
-      removed += 1;
-    }
-  }
-  if (removed) saveStore(store);
-  return removed;
-}
-
+/** Wipe all local listening records (settings → 清空本机). Does not touch cloud account. */
 export function clearAllRecords() {
   const store = loadStore();
   store.records = {};

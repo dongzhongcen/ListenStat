@@ -566,6 +566,9 @@ function bindViewEvents() {
     autoToggle.addEventListener('change', async () => {
       if (api?.setProfile) {
         state.data = await api.setProfile({ autostart: autoToggle.checked });
+      }
+    });
+  }
 
   document.getElementById('btn-clear-local')?.addEventListener('click', async () => {
     if (!api?.clearLocalRecords) return;
@@ -583,9 +586,6 @@ function bindViewEvents() {
       state.busy = false;
     }
   });
-      }
-    });
-  }
 }
 
 function syncNav() {

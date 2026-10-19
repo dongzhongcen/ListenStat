@@ -17,7 +17,6 @@ import {
   upsertRemoteRecords,
   recordsForPush,
   computeStats,
-  purgeLegacyDemoRecords,
   clearAllRecords,
   listRecords,
 } from './store.js';
@@ -395,8 +394,6 @@ async function startMediaTracking() {
 }
 
 app.whenReady().then(async () => {
-  const purged = purgeLegacyDemoRecords();
-  if (purged) console.log('[store] purged legacy demo records:', purged);
   registerIpc();
   createWindow();
   const creds = loadCredentials();
