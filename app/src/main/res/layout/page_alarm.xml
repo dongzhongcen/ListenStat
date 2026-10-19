@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="110dp">
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal">
+
+            <TextView
+                style="@style/LS.BigTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/alarm_title" />
+
+            <ImageButton
+                android:id="@+id/btnAddAlarm"
+                style="@style/LS.CircleButton"
+                android:background="@drawable/bg_circle_mint"
+                android:contentDescription="@string/alarm_add"
+                android:src="@drawable/ic_alarm"
+                app:tint="@color/ls_ink" />
+        </LinearLayout>
+
+        <TextView
+            style="@style/LS.Hand"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="6dp"
+            android:rotation="-3"
+            android:text="@string/alarm_hand" />
+
+        <TextView
+            android:id="@+id/txtExactHint"
+            style="@style/LS.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="12dp"
+            android:background="@drawable/bg_card_peach"
+            android:padding="14dp"
+            android:tag="glass"
+            android:text="@string/alarm_exact_hint"
+            android:visibility="gone" />
+
+        <TextView
+            android:id="@+id/txtAlarmEmpty"
+            style="@style/LS.Body"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="24dp"
+            android:gravity="center"
+            android:text="@string/alarm_empty" />
+
+        <LinearLayout
+            android:id="@+id/listAlarms"
+            style="@style/LS.PeachCard"
+            android:layout_marginTop="18dp"
+            android:paddingTop="8dp"
+            android:visibility="gone" />
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>

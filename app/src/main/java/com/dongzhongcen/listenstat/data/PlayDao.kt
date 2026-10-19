@@ -133,6 +133,10 @@ interface PlayDao {
     @Query("SELECT startedAtMs, endedAtMs FROM play_sessions WHERE dayKey = :day")
     suspend fun spansForDay(day: String): List<TimeSpan>
 
+    /** Full sessions for calendar day detail. */
+    @Query("SELECT * FROM play_sessions WHERE dayKey = :day ORDER BY startedAtMs")
+    suspend fun sessionsForDay(day: String): List<PlaySession>
+
     @Query(
         """
         SELECT dayKey AS name, SUM(durationMs) AS totalMs

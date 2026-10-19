@@ -38,10 +38,12 @@ import kotlinx.coroutines.withContext
 
 class MainActivity : AppCompatActivity() {
 
-    private enum class Page { STATS, ACHIEVEMENTS, SETTINGS }
+    private enum class Page { STATS, CALENDAR, ALARM, ACHIEVEMENTS, SETTINGS }
 
     private lateinit var binding: ActivityMainBinding
     private lateinit var statsPage: StatsPage
+    private lateinit var calendarPage: CalendarPage
+    private lateinit var alarmPage: AlarmPage
     private lateinit var achievementsPage: AchievementsPage
     private lateinit var settingsPage: SettingsPage
     private lateinit var appDetailPage: AppDetailPage
@@ -77,9 +79,13 @@ class MainActivity : AppCompatActivity() {
         setContentView(binding.root)
 
         statsPage = StatsPage(this, binding.pageStats) { showPage(Page.SETTINGS) }
+        calendarPage = CalendarPage(this, binding.pageCalendar)
+        alarmPage = AlarmPage(this, binding.pageAlarm)
         achievementsPage = AchievementsPage(this, binding.pageAchievements)
         settingsPage = SettingsPage(this, binding.pageSettings, settings)
         statsPage.init()
+        calendarPage.init()
+        alarmPage.init()
         settingsPage.init()
         appDetailPage = AppDetailPage(this, binding.pageAppDetail) {
             binding.navPill.isVisible = true
@@ -99,6 +105,8 @@ class MainActivity : AppCompatActivity() {
         })
 
         binding.navStats.setOnClickListener { showPage(Page.STATS) }
+        binding.navCalendar.setOnClickListener { showPage(Page.CALENDAR) }
+        binding.navAlarm.setOnClickListener { showPage(Page.ALARM) }
         binding.navAchievements.setOnClickListener { showPage(Page.ACHIEVEMENTS) }
         binding.navSettings.setOnClickListener { showPage(Page.SETTINGS) }
         page = savedInstanceState?.getString(KEY_PAGE)?.let { runCatching { Page.valueOf(it) }.getOrNull() }
@@ -150,6 +158,8 @@ class MainActivity : AppCompatActivity() {
         page = p
         val views = mapOf(
             Page.STATS to binding.pageStats.root,
+            Page.CALENDAR to binding.pageCalendar.root,
+            Page.ALARM to binding.pageAlarm.root,
             Page.ACHIEVEMENTS to binding.pageAchievements.root,
             Page.SETTINGS to binding.pageSettings.root
         )
@@ -167,6 +177,8 @@ class MainActivity : AppCompatActivity() {
         }
         listOf(
             binding.navStats to Page.STATS,
+            binding.navCalendar to Page.CALENDAR,
+            binding.navAlarm to Page.ALARM,
             binding.navAchievements to Page.ACHIEVEMENTS,
             binding.navSettings to Page.SETTINGS
         ).forEach { (btn, which) ->
@@ -175,12 +187,18 @@ class MainActivity : AppCompatActivity() {
             btn.imageTintList = ContextCompat.getColorStateList(this, if (on) R.color.ls_ink else R.color.ls_white)
             btn.isSelected = on
         }
-        if (p == Page.SETTINGS) settingsPage.refresh()
+        when (p) {
+            Page.SETTINGS -> settingsPage.refresh()
+            Page.CALENDAR -> calendarPage.onShow()
+            Page.ALARM -> alarmPage.onShow()
+            else -> Unit
+        }
     }
 
     private fun applyInsets() {
         val pages = listOf(
-            binding.pageStats.content, binding.pageAchievements.content,
+            binding.pageStats.content, binding.pageCalendar.content,
+            binding.pageAlarm.content, binding.pageAchievements.content,
             binding.pageSettings.content, binding.pageAppDetail.content
         )
         val base = pages.map { Triple(it.paddingTop, it.paddingBottom, it.paddingLeft) }
@@ -442,8 +460,8 @@ class MainActivity : AppCompatActivity() {
         }
         applyVeil()
         listOf<View>(
-            binding.pageStats.root, binding.pageAchievements.root,
-            binding.pageSettings.root, binding.pageAppDetail.root
+            binding.pageStats.root, binding.pageCalendar.root, binding.pageAlarm.root,
+            binding.pageAchievements.root, binding.pageSettings.root, binding.pageAppDetail.root
         ).forEach { Ui.applyGlass(it) }
     }
 
@@ -455,6 +473,8 @@ class MainActivity : AppCompatActivity() {
 
     private fun restoreMainPageVisibility() {
         binding.pageStats.root.isVisible = page == Page.STATS
+        binding.pageCalendar.root.isVisible = page == Page.CALENDAR
+        binding.pageAlarm.root.isVisible = page == Page.ALARM
         binding.pageAchievements.root.isVisible = page == Page.ACHIEVEMENTS
         binding.pageSettings.root.isVisible = page == Page.SETTINGS
         binding.pageAppDetail.root.isVisible = false
@@ -463,6 +483,8 @@ class MainActivity : AppCompatActivity() {
     fun openAppDetail(packageName: String, appLabel: String, period: Period) {
         binding.navPill.isVisible = false
         binding.pageStats.root.isVisible = false
+        binding.pageCalendar.root.isVisible = false
+        binding.pageAlarm.root.isVisible = false
         binding.pageAchievements.root.isVisible = false
         binding.pageSettings.root.isVisible = false
         appDetailPage.open(packageName, appLabel, period)
