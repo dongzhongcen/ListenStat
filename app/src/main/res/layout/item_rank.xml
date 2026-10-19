@@ -3,17 +3,22 @@
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
+    android:layout_marginTop="6dp"
+    android:background="@drawable/bg_row_white"
     android:gravity="center_vertical"
     android:orientation="horizontal"
-    android:paddingVertical="10dp">
+    android:paddingHorizontal="14dp"
+    android:paddingVertical="11dp"
+    android:tag="pill">
 
     <TextView
         android:id="@+id/rank"
-        android:layout_width="28dp"
+        android:layout_width="26dp"
         android:layout_height="wrap_content"
+        android:fontFamily="@font/poppins_semibold"
         android:fontFeatureSettings="tnum"
-        android:textAppearance="?attr/textAppearanceLabelLarge"
-        android:textColor="?attr/colorPrimary" />
+        android:textColor="@color/ls_ink"
+        android:textSize="14sp" />
 
     <LinearLayout
         android:layout_width="0dp"
@@ -33,17 +38,17 @@
                 android:layout_weight="1"
                 android:ellipsize="end"
                 android:maxLines="1"
-                android:textAppearance="?attr/textAppearanceBodyLarge"
-                android:textColor="?attr/colorOnSurface" />
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/ls_ink" />
 
             <TextView
                 android:id="@+id/duration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginStart="12dp"
+                android:layout_marginStart="10dp"
                 android:fontFeatureSettings="tnum"
-                android:textAppearance="?attr/textAppearanceBodyMedium"
-                android:textColor="?attr/colorOnSurfaceVariant" />
+                android:textAppearance="?attr/textAppearanceBodySmall"
+                android:textColor="@color/ls_muted" />
         </LinearLayout>
 
         <com.google.android.material.progressindicator.LinearProgressIndicator
@@ -52,9 +57,9 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="6dp"
             android:max="1000"
-            app:indicatorColor="?attr/colorPrimary"
-            app:trackColor="?attr/colorSurfaceContainerHigh"
+            app:indicatorColor="@color/ls_mint_deep"
+            app:trackColor="@color/ls_track"
             app:trackCornerRadius="2dp"
-            app:trackThickness="4dp" />
+            app:trackThickness="3dp" />
     </LinearLayout>
 </LinearLayout>

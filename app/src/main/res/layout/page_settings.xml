@@ -1,0 +1,293 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:id="@+id/scroll"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:clipToPadding="false">
+
+    <LinearLayout
+        android:id="@+id/content"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="vertical"
+        android:paddingHorizontal="20dp"
+        android:paddingTop="12dp"
+        android:paddingBottom="110dp">
+
+        <TextView
+            style="@style/LS.BigTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="56dp"
+            android:text="@string/settings_title" />
+
+        <!-- Wallpaper -->
+        <LinearLayout
+            style="@style/LS.PeachCard"
+            android:layout_marginTop="22dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LS.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/wallpaper_title" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/wallpaper_body" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnPickWallpaper"
+                    style="@style/LS.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wallpaper_pick"
+                    app:icon="@drawable/ic_image"
+                    app:iconTint="@color/ls_white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnRemoveWallpaper"
+                    style="@style/LS.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/wallpaper_remove" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:id="@+id/groupWallpaperAdjust"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="12dp"
+                android:orientation="vertical">
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wallpaper_blur"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="@color/ls_ink" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderBlur"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="1"
+                    android:valueFrom="0"
+                    android:valueTo="25"
+                    app:labelBehavior="gone"
+                    app:thumbColor="@color/ls_ink"
+                    app:trackColorActive="@color/ls_ink"
+                    app:trackColorInactive="@color/ls_white" />
+
+                <TextView
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/wallpaper_dim"
+                    android:textAppearance="?attr/textAppearanceLabelLarge"
+                    android:textColor="@color/ls_ink" />
+
+                <com.google.android.material.slider.Slider
+                    android:id="@+id/sliderDim"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:stepSize="5"
+                    android:valueFrom="0"
+                    android:valueTo="80"
+                    app:labelBehavior="gone"
+                    app:thumbColor="@color/ls_ink"
+                    app:trackColorActive="@color/ls_ink"
+                    app:trackColorInactive="@color/ls_white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Update -->
+        <LinearLayout
+            style="@style/LS.MintCard"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LS.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/update_title" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/update_body"
+                android:textColor="@color/ls_ink" />
+
+            <com.google.android.material.materialswitch.MaterialSwitch
+                android:id="@+id/switchAutoUpdate"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:text="@string/update_auto"
+                android:textAppearance="?attr/textAppearanceBodyMedium"
+                android:textColor="@color/ls_ink" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="8dp"
+                android:gravity="center_vertical"
+                android:orientation="horizontal">
+
+                <TextView
+                    android:id="@+id/txtLastCheck"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:textAppearance="?attr/textAppearanceBodySmall"
+                    android:textColor="@color/ls_ink" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnCheckUpdate"
+                    style="@style/LS.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/update_check_now"
+                    app:icon="@drawable/ic_refresh"
+                    app:iconTint="@color/ls_white" />
+            </LinearLayout>
+        </LinearLayout>
+
+        <!-- Backup -->
+        <LinearLayout
+            style="@style/LS.WhiteCard"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LS.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/backup_title" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:text="@string/backup_body" />
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnBackup"
+                style="@style/LS.Button"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:text="@string/backup_open"
+                app:icon="@drawable/ic_export"
+                app:iconTint="@color/ls_white" />
+        </LinearLayout>
+
+        <!-- Notification access -->
+        <LinearLayout
+            style="@style/LS.WhiteCard"
+            android:layout_marginTop="16dp"
+            android:gravity="center_vertical"
+            android:orientation="horizontal"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="18dp">
+
+            <LinearLayout
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:orientation="vertical">
+
+                <TextView
+                    style="@style/LS.SectionTitle"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@string/access_title" />
+
+                <TextView
+                    android:id="@+id/txtAccess"
+                    style="@style/LS.Body"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+
+            <com.google.android.material.button.MaterialButton
+                android:id="@+id/btnAccess"
+                style="@style/LS.Button.Outlined"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="@string/access_open" />
+        </LinearLayout>
+
+        <!-- About -->
+        <LinearLayout
+            style="@style/LS.PeachCard"
+            android:layout_marginTop="16dp"
+            android:paddingHorizontal="20dp"
+            android:paddingBottom="20dp">
+
+            <TextView
+                style="@style/LS.SectionTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:text="@string/about_title" />
+
+            <TextView
+                android:id="@+id/txtVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="4dp"
+                android:textAppearance="?attr/textAppearanceBodyLarge"
+                android:textColor="@color/ls_ink" />
+
+            <TextView
+                style="@style/LS.Body"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="2dp"
+                android:text="@string/about_body" />
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="14dp"
+                android:orientation="horizontal">
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnGithub"
+                    style="@style/LS.Button"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:text="@string/about_github"
+                    app:icon="@drawable/ic_arrow_up_right"
+                    app:iconGravity="end"
+                    app:iconTint="@color/ls_white" />
+
+                <com.google.android.material.button.MaterialButton
+                    android:id="@+id/btnLicenses"
+                    style="@style/LS.Button.Outlined"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    android:layout_marginStart="8dp"
+                    android:text="@string/about_licenses" />
+            </LinearLayout>
+        </LinearLayout>
+    </LinearLayout>
+</androidx.core.widget.NestedScrollView>
