@@ -100,6 +100,9 @@ export function startMediaWatcher(onTick, intervalMs = 5000) {
           last.title === session.title &&
           last.appPackage === session.appPackage;
         onTick(session, same ? elapsed : Math.min(elapsed, intervalMs));
+      } else {
+        // Pause / idle must clear nowPlaying in the main process.
+        onTick(session, 0);
       }
       last = session;
       await new Promise((r) => setTimeout(r, intervalMs));
