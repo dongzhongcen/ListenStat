@@ -2,14 +2,14 @@
 
 # ListenStat
 
-**听时 — Android 本地媒体播放时长统计**
+**听时 — Android / Windows 媒体播放时长统计**
 
-*按日 · 月 · 年汇总（可切换任意日期）· 应用与内容 Top 20 · 成就 · 默认定只留在手机 · 可选云端同步*
+*按日 · 月 · 年汇总 · 应用与内容 Top 20 · 成就 · 数据默认只存本机 · 可选云端同步 · 手机与电脑可配对*
 
 **简体中文** | [English](README.en.md)
 
 [![许可证](https://img.shields.io/badge/许可证-MIT-blue)](LICENSE)
-[![平台](https://img.shields.io/badge/平台-Android%208.0%2B-green)](https://github.com/dongzhongcen/ListenStat)
+[![平台](https://img.shields.io/badge/平台-Android%208.0%2B%20%7C%20Windows-green)](https://github.com/dongzhongcen/ListenStat)
 
 </div>
 
@@ -17,13 +17,18 @@
 
 **v0.2.3**：可选「云端同步」（设置中默认关闭）。开启后用稳定设备 ID 向自建同步服务注册，上传/拉取各日收听合计（包名、标题、日期、时长）；壁纸图片不上传。关闭时行为与本地版完全一致。基于 v0.2.2。
 
+**Windows 桌面端（`desktop/`）**：Electron 客户端，可读 Windows「正在播放」统计电脑收听时长，并可在开启同步后与手机配对、合并查看。安装包将挂在同一 [Releases](https://github.com/dongzhongcen/ListenStat/releases) 页；构建说明见 [`desktop/README.md`](desktop/README.md)。
+
 **v0.2.2**：排行榜支持应用下钻——点击「按应用 Top」中的某一应用，可查看该应用在当前周期的总时长与标题明细，并支持日/月/年切换（纯本地）。基于 v0.2.1。
 
 **v0.2.1**：统计任意发布系统媒体会话的应用（音乐、播客、视频、浏览器等；无标题时回退为应用名），设置页文案精简。基于 v0.2.0。测试版见 [Releases](https://github.com/dongzhongcen/ListenStat/releases)（预发布 `v0.2.1-test`）。
 
 ## 简介
 
-ListenStat（听时）读取系统「正在播放」媒体会话（与控制中心媒体控件同源），统计**任意**会发布媒体会话的应用（音乐、播客、视频播放器、会暴露会话的浏览器等），在本地累计播放时长。系统没有媒体会话时无法记录。
+ListenStat（听时）读取系统「正在播放」媒体会话，统计**任意**会发布媒体会话的应用（音乐、播客、视频播放器、会暴露会话的浏览器等），在本地累计播放时长。系统没有媒体会话时无法记录。
+
+- **Android**：通知使用权读取媒体会话（与控制中心媒体控件同源）
+- **Windows**：桌面端（[`desktop/`](desktop/)）读取系统媒体控件（音量弹窗里的「正在播放」），可选托盘常驻与开机自启
 
 - 按 **日 / 月 / 年** 查看，并可切换到 **任意一天、一个月或一年**：左右箭头、横向日期条，或点日期打开日历 / 月份 / 年份选择器
 - **按应用** Top 20、**按内容标题** Top 20（标题取决于播放器是否写入媒体元数据；为空时记为应用名）
@@ -44,6 +49,7 @@ ListenStat（听时）读取系统「正在播放」媒体会话（与控制中�
 - 默认所有记录只存在本机 Room 数据库（含应用包名、标题、艺术家/作者字段 `artist`、起止时间）
 - **云端同步默认关闭**。关闭时不上传、不请求同步接口，行为与从前一致
 - 开启云端同步后会上传：设备稳定 ID、可选显示名称，以及各日收听合计（`package` / `title` / `day` / `duration_ms`）。**不上传壁纸图片**、无广告或第三方统计 SDK
+- 手机与 Windows 可通过**配对码**合并到同一账号（需两端都开启同步）；未配对时各设备仍是独立账号
 - 更新检测与云端同步相互独立，只读取公开的版本信息
 - 同步用的设备令牌保存在 EncryptedSharedPreferences（或等效私有存储），不会写入日志
 - 壁纸通过系统照片选择器选取，复制到应用私有目录；备份文件通过系统文件选择器读写 —— **无需存储 / 相册权限**
@@ -56,6 +62,7 @@ ListenStat（听时）读取系统「正在播放」媒体会话（与控制中�
 2. 可选填写显示名称；同步开启期间改名会 PATCH 到服务器
 3. 高级：可改服务器地址（默认 `https://jiketianxiawang.top`）。调试版允许 `http://IP` 做实验室测试；正式版仅 HTTPS
 4. 拉取合并策略：按 `record_id`（由包名+标题+日期派生）取 **本地与远端时长的较大值**——若远端更大，仅补一条合成会话填补差额，**不会删除或缩短本机已有记录**
+5. **配对**：一端生成配对码，另一端输入，即可把手机与电脑合并到同一账号（服务端已支持；手机端配对入口随后续小版本提供）
 
 ## 使用
 
@@ -76,10 +83,23 @@ ListenStat（听时）读取系统「正在播放」媒体会话（与控制中�
 - 数据库从版本 1 升级到 2 使用显式迁移（新增成就表和一个去重索引），不会清空已有数据；数据库结构导出在 `app/schemas/`
 - 若以后需要换机，建议先导出一次备份
 
+## Windows 桌面端
+
+源码在 [`desktop/`](desktop/)。在 Windows 上：
+
+```bat
+cd desktop
+npm install
+npm start
+npm run dist:win
+```
+
+产物在 `desktop/release/`（NSIS 安装包与便携版）。详见 [`desktop/README.md`](desktop/README.md)。Electron / Chromium 等上游开源许可随安装包附带。
+
 ## 限制
 
-- 仅 Android；iOS 无法同等实现
-- 依赖系统媒体会话（MediaSession）；播放器不发布会话时无法统计
+- 支持 Android 与 Windows；iOS 无法同等实现
+- 依赖系统媒体会话（Android MediaSession / Windows 系统媒体控件）；播放器不发布会话时无法统计
 - 标题明细依赖播放器写入 `MediaMetadata`；为空时回退为应用名
 - 统计的是媒体会话处于 Playing 的墙钟时间
 
