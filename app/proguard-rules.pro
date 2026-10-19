@@ -14,3 +14,10 @@
 # Better stack traces in bug reports.
 -keepattributes SourceFile,LineNumberTable
 -renamesourcefileattribute SourceFile
+
+# Tink / EncryptedSharedPreferences (release R8)
+-dontwarn javax.annotation.concurrent.GuardedBy
+-dontwarn javax.annotation.**
+# Please add these rules to your existing keep rules in order to suppress warnings.
+# This is generated automatically by the Android Gradle plugin.
+-dontwarn javax.annotation.concurrent.GuardedBy
