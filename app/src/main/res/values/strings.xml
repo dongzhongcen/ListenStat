@@ -1,13 +1,27 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">ListenStat</string>
-    <string name="open_permission">打开通知使用权设置</string>
+    <string name="header_title">听时</string>
+    <string name="header_subtitle">本地统计 · 不上传 · 后台省电</string>
+    <string name="open_permission">去开启通知使用权</string>
     <string name="enable_listenstat">请开启 ListenStat 的通知使用权，才能统计控制中心正在播放的内容。</string>
-    <string name="permission_on">通知使用权：已开启（仅本地统计，不上传）</string>
-    <string name="permission_off">通知使用权：未开启 — 无法读取媒体会话</string>
-    <string name="refresh">刷新统计</string>
-    <string name="total_fmt">合计时长：%1$s</string>
+    <string name="permission_title">还差一步</string>
+    <string name="permission_body">ListenStat 需要「通知使用权」来读取系统正在播放的媒体会话。数据只保存在本机，不上传。</string>
+    <string name="range_day">日</string>
+    <string name="range_month">月</string>
+    <string name="range_year">年</string>
+    <string name="total_label_day">今天共听</string>
+    <string name="total_label_month">本月共听</string>
+    <string name="total_label_year">今年共听</string>
     <string name="section_apps">按应用 Top 20</string>
     <string name="section_titles">按内容标题 Top 20</string>
-    <string name="empty">（暂无数据，先放一段有声书/音乐再回来刷新）</string>
+    <string name="empty_title">这里还很安静</string>
+    <string name="empty_body">先放一段有声书或音乐，回来就能看到统计。</string>
+    <string name="now_listening">正在听 / Now listening</string>
+    <string name="live_idle">当前未在播放</string>
+    <string name="live_idle_hint">今日累计</string>
+    <string name="live_unknown_title">(未知标题)</string>
+    <string name="live_more_fmt">%1$s 等 %2$d 个</string>
+    <string name="live_elapsed_label">本段</string>
+    <string name="live_today_fmt">今日累计 %1$s</string>
 </resources>
