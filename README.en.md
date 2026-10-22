@@ -15,7 +15,7 @@
 
 ## Status
 
-**v0.3 (this branch)** — adds a **listening calendar** and **local listening reminders (alarms)**. Bottom nav has five pages: Stats · Calendar · Alarm · Achievements · Settings. Alarms stay on-device only (SharedPreferences + AlarmManager) and fire system notifications when due; the app does **not** read or write system calendar accounts and does **not** use `READ_CALENDAR` / `WRITE_CALENDAR`. Built on v0.2.3.
+**v0.3 (this branch)** — adds a **listening calendar** and **local listening reminders (alarms)**. Bottom nav has five pages: Stats · Calendar · Alarm · Achievements · Settings. Alarms stay on-device only (SharedPreferences + AlarmManager `setAlarmClock`) and fire a high-priority system notification with the alarm ringtone when due; the app does **not** read or write system calendar accounts and does **not** use `READ_CALENDAR` / `WRITE_CALENDAR`. Built on v0.2.3.
 
 **v0.2.3** — optional cloud sync (off by default in Settings). When enabled, registers with a stable device id against a self-hosted sync API and push/pulls day listening aggregates (package, title, day, duration). Wallpaper images are never uploaded. With sync off, behaviour matches the local-only app. Built on v0.2.2.
 
@@ -50,8 +50,8 @@ ListenStat reads system media sessions from **any** app that publishes one (musi
 | Notification Listener access | read system media sessions (required for tracking) |
 | `INTERNET` | (1) optional GitHub Releases update check; (2) optional cloud sync API when the user turns sync on |
 | `POST_NOTIFICATIONS` | post a system notification when a listening reminder fires (runtime grant on Android 13+); **not** a persistent foreground-service notification for tracking |
-| `SCHEDULE_EXACT_ALARM` | schedule exact local listening reminders via AlarmManager (without it, reminders may be slightly delayed) |
-| `RECEIVE_BOOT_COMPLETED` | re-register local reminders after reboot so they are not lost |
+| `SCHEDULE_EXACT_ALARM` | schedule exact local listening reminders via `AlarmManager.setAlarmClock` (falls back to inexact if denied) |
+| `RECEIVE_BOOT_COMPLETED` | re-register local reminders after reboot, timezone change, or app update |
 | `VIBRATE` | vibration for reminder notifications |
 
 - By default all records stay in the on-device Room database (package name, title, artist, timestamps)
@@ -110,7 +110,7 @@ Artifacts land in `desktop/release/` (NSIS installer and portable). See [`deskto
 - While playing, only the start time is kept in memory; one database write when the segment ends; segments under 3 s are ignored
 - If the process is killed, the next start finalizes the last segment using the system-recorded exit time (no invented time)
 - **Media tracking uses no foreground service, no persistent notification, and no wake lock**; the UI timer ticks only while the screen is visible and something is playing. Listening reminders only post a one-shot notification when due — they do not keep a foreground service alive
-- Achievements are computed only when the app is opened/resumed (no background work); by default the only network use is the daily-at-most version check (can be disabled); cloud sync must be turned on separately; local alarms are scheduled with AlarmManager and re-registered by `BootReceiver` after reboot
+- Achievements are computed only when the app is opened/resumed (no background work); by default the only network use is the daily-at-most version check (can be disabled); cloud sync must be turned on separately; local alarms use `setAlarmClock` and are re-registered by `BootReceiver` after reboot / timezone change / update; on resume the app calls `requestRebind` on the notification listener to recover tracking after OEM process kills
 - Tip: only if the system keeps killing ListenStat and stats get interrupted, set it to "unrestricted" in battery optimization
 
 ## Build
