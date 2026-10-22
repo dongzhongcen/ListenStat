@@ -90,6 +90,8 @@ class MediaTrackService : NotificationListenerService() {
     private val open = HashMap<MediaSession.Token, Segment>()
     private val graceTimers = HashMap<MediaSession.Token, Runnable>()
     private val nearEndTimers = HashMap<MediaSession.Token, Runnable>()
+    /** After near-end close while still "playing", watch for the next item to start. */
+    private val orphanWatches = HashMap<MediaSession.Token, Runnable>()
     private val labelCache = HashMap<String, String>()
     private var lastCheckpointElapsed = 0L
     /** Segment ids whose DB insert is in flight (guards against double-recovery). */
@@ -204,7 +206,14 @@ class MediaTrackService : NotificationListenerService() {
     private fun maybeTrackFromNotification(sbn: StatusBarNotification) {
         if (sbn.packageName == packageName) return
         val token = mediaSessionToken(sbn.notification) ?: return
-        if (token in tracked) return
+        if (token in tracked) {
+            // Refresh state: some OEMs drop MediaController callbacks while the
+            // notification keeps updating. Re-drive the state machine from the
+            // latest controller snapshot so recording can resume without a reopen.
+            val t = tracked[token] ?: return
+            handleState(token, t.controller.playbackState)
+            return
+        }
         try {
             trackController(MediaController(this, token))
             publishLive()
@@ -225,6 +234,7 @@ class MediaTrackService : NotificationListenerService() {
         tracked.remove(token)?.let { it.controller.unregisterCallback(it.callback) }
         cancelGrace(token)
         cancelNearEnd(token)
+        cancelOrphanWatch(token)
     }
 
     // ---- state machine (handler thread) ----
@@ -235,6 +245,7 @@ class MediaTrackService : NotificationListenerService() {
         when (state?.state ?: PlaybackState.STATE_NONE) {
             PlaybackState.STATE_PLAYING -> {
                 cancelGrace(token)
+                cancelOrphanWatch(token)
                 cur?.transientSinceElapsed = -1
                 val meta = resolvedMeta(t.controller, t.controller.metadata)
                 val mediaId = mediaIdOf(t.controller.metadata)
@@ -275,11 +286,24 @@ class MediaTrackService : NotificationListenerService() {
 
     private fun handleMetadata(token: MediaSession.Token, metadata: MediaMetadata?) {
         val t = tracked[token] ?: return
-        val cur = open[token] ?: return // not playing: nothing to split
         val meta = resolvedMeta(t.controller, metadata)
         val mediaId = mediaIdOf(metadata)
         val pos = positionOf(t.controller.playbackState)
         val dur = durationOf(metadata)
+        val state = t.controller.playbackState?.state ?: PlaybackState.STATE_NONE
+        val playing = state == PlaybackState.STATE_PLAYING || state in TRANSIENT_STATES
+        val cur = open[token]
+        if (cur == null) {
+            // Near-end / grace may have closed the segment while the session stayed
+            // PLAYING. The next item often arrives as metadata-only (no state change),
+            // which used to be ignored — recording then stayed dead until reopen.
+            if (playing) {
+                cancelOrphanWatch(token)
+                startSegment(t.controller, meta, mediaId, pos, dur)
+                publishLive()
+            }
+            return
+        }
         if (!shouldSplit(cur, meta, mediaId, pos)) {
             // Artwork-only / duration refresh — keep the same segment, refresh progress.
             rememberProgress(cur, mediaId, pos, dur)
@@ -289,6 +313,7 @@ class MediaTrackService : NotificationListenerService() {
         val wasTransient = cur.transientSinceElapsed >= 0
         cancelGrace(token)
         cancelNearEnd(token)
+        cancelOrphanWatch(token)
         endSegment(cur, nowAt(cur))
         val next = startSegment(t.controller, meta, mediaId, pos, dur)
         if (wasTransient && t.controller.playbackState?.state != PlaybackState.STATE_PLAYING) {
@@ -395,6 +420,11 @@ class MediaTrackService : NotificationListenerService() {
                             next.transientSinceElapsed = SystemClock.elapsedRealtime()
                             scheduleGrace(token)
                         }
+                    } else if (playing) {
+                        // Still "playing" at the natural end with no next item yet.
+                        // Watch briefly so a quiet restart (same session, no pause)
+                        // reopens a segment without requiring the user to reopen the app.
+                        scheduleOrphanWatch(token, attempts = 0)
                     }
                 }
                 else -> {
@@ -410,6 +440,46 @@ class MediaTrackService : NotificationListenerService() {
 
     private fun cancelNearEnd(token: MediaSession.Token) {
         nearEndTimers.remove(token)?.let { handler.removeCallbacks(it) }
+    }
+
+    /**
+     * After a near-end close left no open segment while the session is still
+     * PLAYING, poll briefly for a position restart (common when the player
+     * auto-advances without a metadata callback). Bounded — not a standing loop.
+     */
+    private fun scheduleOrphanWatch(token: MediaSession.Token, attempts: Int) {
+        cancelOrphanWatch(token)
+        if (attempts > ORPHAN_WATCH_MAX_ATTEMPTS) return
+        val r = Runnable {
+            orphanWatches.remove(token)
+            if (open.containsKey(token)) return@Runnable
+            val t = tracked[token] ?: return@Runnable
+            val st = t.controller.playbackState
+            val state = st?.state ?: PlaybackState.STATE_NONE
+            if (state != PlaybackState.STATE_PLAYING && state !in TRANSIENT_STATES) return@Runnable
+            val pos = positionOf(st)
+            val meta = resolvedMeta(t.controller, t.controller.metadata)
+            val mediaId = mediaIdOf(t.controller.metadata)
+            if (pos <= RESTART_POS_MS) {
+                startSegment(
+                    t.controller, meta, mediaId, pos,
+                    durationOf(t.controller.metadata)
+                )
+                if (state in TRANSIENT_STATES) {
+                    open[token]?.transientSinceElapsed = SystemClock.elapsedRealtime()
+                    scheduleGrace(token)
+                }
+                publishLive()
+            } else {
+                scheduleOrphanWatch(token, attempts + 1)
+            }
+        }
+        orphanWatches[token] = r
+        handler.postDelayed(r, ORPHAN_WATCH_INTERVAL_MS)
+    }
+
+    private fun cancelOrphanWatch(token: MediaSession.Token) {
+        orphanWatches.remove(token)?.let { handler.removeCallbacks(it) }
     }
 
     private fun startSegment(
@@ -434,6 +504,7 @@ class MediaTrackService : NotificationListenerService() {
             durationMs = durationMs.coerceAtLeast(0)
         )
         open[seg.token] = seg
+        cancelOrphanWatch(seg.token)
         // The only "in progress" disk write: one small async prefs entry per segment.
         prefs.edit().putString(KEY_SEG_PREFIX + seg.id, seg.toJson().toString()).apply()
         scheduleNearEnd(seg.token, seg)
@@ -622,6 +693,8 @@ class MediaTrackService : NotificationListenerService() {
         const val MIN_DURATION_FOR_END_MS = 10_000L
         const val NEAR_END_SCHEDULE_MAX_MS = 30_000L
         const val NEAR_END_SLACK_MS = 800L
+        const val ORPHAN_WATCH_INTERVAL_MS = 2_000L
+        const val ORPHAN_WATCH_MAX_ATTEMPTS = 15
         val DAY_FMT: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy-MM-dd")
         val TRANSIENT_STATES = setOf(
             PlaybackState.STATE_BUFFERING,

@@ -6,6 +6,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.provider.Settings
+import android.service.notification.NotificationListenerService
 import android.view.View
 import androidx.activity.OnBackPressedCallback
 import androidx.activity.result.PickVisualMediaRequest
@@ -22,6 +23,7 @@ import androidx.lifecycle.lifecycleScope
 import com.dongzhongcen.listenstat.BuildConfig
 import com.dongzhongcen.listenstat.R
 import com.dongzhongcen.listenstat.achievements.AchievementRepository
+import com.dongzhongcen.listenstat.alarm.AlarmScheduler
 import com.dongzhongcen.listenstat.backup.BackupManager
 import com.dongzhongcen.listenstat.databinding.ActivityMainBinding
 import com.dongzhongcen.listenstat.service.MediaTrackService
@@ -133,9 +135,17 @@ class MainActivity : AppCompatActivity() {
 
     override fun onResume() {
         super.onResume()
+        // NLS can stay unbound after OEM kills / force-stop until the user returns.
+        // requestRebind asks the system to reconnect so tracking resumes without a
+        // manual notification-access toggle.
+        maybeRebindMediaTracker()
         statsPage.setPermissionMissing(!isNotificationAccessEnabled())
         settingsPage.refresh()
         refreshAchievements(announce = true)
+        if (intent?.hasExtra(AlarmScheduler.EXTRA_ALARM_ID) == true) {
+            showPage(Page.ALARM)
+            intent?.removeExtra(AlarmScheduler.EXTRA_ALARM_ID)
+        }
     }
 
     override fun onStop() {
@@ -496,6 +506,15 @@ class MainActivity : AppCompatActivity() {
         val cn = ComponentName(this, MediaTrackService::class.java)
         val flat = Settings.Secure.getString(contentResolver, "enabled_notification_listeners")
         return flat?.contains(cn.flattenToString()) == true
+    }
+
+    private fun maybeRebindMediaTracker() {
+        if (!isNotificationAccessEnabled()) return
+        runCatching {
+            NotificationListenerService.requestRebind(
+                ComponentName(this, MediaTrackService::class.java)
+            )
+        }
     }
 
     private companion object {
